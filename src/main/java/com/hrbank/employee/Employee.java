@@ -1,0 +1,53 @@
+package com.hrbank.employee;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import java.util.Date;
+import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "employees")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Employee {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
+  @Column(nullable = false)
+  private String name;
+  @Column(unique = true, nullable = false)
+  private String email;
+  @Column(nullable = false)
+  private String title;
+  @Column(name = "employee_number",unique = true, nullable = false)
+  private String employeeNumber;
+  @Column(name = "joined_at",nullable = false)
+  private Date joinedAt;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private EmployeeStatus status;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "department_id")
+  private Department department;
+  @OneToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "file_id")
+  private File file;
+}
