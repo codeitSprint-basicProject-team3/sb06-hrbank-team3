@@ -18,8 +18,10 @@ public class Backup {
 
     private String worker; // 작업자의 IP주소
 
+    @Column(name = "started_at")
     private LocalDateTime startedAt;
 
+    @Column(name = "ended_at")
     private LocalDateTime endedAt;
 
     @Enumerated(EnumType.STRING)

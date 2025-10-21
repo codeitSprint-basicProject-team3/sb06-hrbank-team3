@@ -1,11 +1,8 @@
 package com.hrbank.backup;
 
-import com.hrbank.PageResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +23,9 @@ public class BackupController {
     }
 
     @GetMapping
-    public ResponseEntity<CursorPageBackupDto<BackupDto>> findAll(@RequestParam(required = false) Long cursor,
-                                                                  @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<CursorPageBackupDto<BackupDto>> findAll(
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(backupService.findAll(cursor, size));
     }
 

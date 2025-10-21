@@ -16,7 +16,7 @@ public record BackupDto (
     public static BackupDto from(Backup backup) {
         return BackupDto.builder()
                 .id(backup.getId())
-                // .worker(backup.getWorker())
+                .worker(backup.getWorker())
                 .startedAt(backup.getStartedAt())
                 .endedAt(backup.getEndedAt())
                 .status(backup.getStatus())
