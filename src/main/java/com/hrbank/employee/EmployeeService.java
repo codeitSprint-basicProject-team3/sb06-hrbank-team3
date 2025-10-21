@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import com.hrbank.employee.dto.EmployeeUpdateRequest;
 import com.hrbank.employee.mapper.EmployeeMapper;
 import com.hrbank.file.File;
 import com.hrbank.file.FileService;
@@ -22,10 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class EmployeeService{
 
   private final EmployeeRepository employeeRepository;
+  private final DepartmentRepository departmentRepository;
+
   private final EmployeeMapper employeeMapper;
 
   private final EmployeeHistoryService historyService;
-
   private final FileService fileService;
 
   // 직원 등록
@@ -35,7 +37,7 @@ public class EmployeeService{
       // 이메일 중복 확인
       String email = createRequest.email();
       if (employeeRepository.existsByEmail(email)) {
-          throw new IllegalArgumentException("이메일 " + email + " 은 중복된 이메일입니다.");
+          throw new IllegalArgumentException("중복되는 이메일입니다.");
       }
 
       // 부서 조회
@@ -79,6 +81,49 @@ public class EmployeeService{
 
       Employee employee = employeeRepository.findById(employeeId)
               .orElseThrow(() -> new NoSuchElementException("존재하지 않는 직원입니다."));
+
+      return employeeMapper.toEmployeeDto(employee);
+  }
+
+  // 직원 수정
+  @Transactional
+  public EmployeeDto updateEmployee(Long employeeId, EmployeeUpdateRequest updateRequest, MultipartFile profileImage) {
+
+      // 직원 조회
+      Employee employee = employeeRepository.findById(employeeId)
+              .orElseThrow(() -> new NoSuchElementException("존재하지 않는 직원입니다."));
+
+      // 부서 조회
+      Department newDepartment = departmentRepository.findById(updateRequest.departmentId())
+              .orElseThrow(() -> new NoSuchElementException("존재하지 않는 부서입니다."));
+
+      // 변경하려는 이메일이 기존 데이터와 중복되는지 확인
+      String newEmail = updateRequest.email();
+      if (!employee.getEmail().equals(newEmail) && employeeRepository.existsByEmail(newEmail)) {
+          throw new IllegalArgumentException("중복되는 이메일입니다.");
+      }
+
+      File existingProfileImage = employee.getFile();
+
+      // 새 프로필 파일 존재 시 프로필 수정
+      if (profileImage != null && !profileImage.isEmpty()) {
+          // 기존 프로필 존재 시 기존 파일 삭제
+          if (existingProfileImage != null) {
+              employee.setFile(null);
+              fileService.deleteFile(existingProfileImage);
+          }
+
+          File newProfileImage = fileService.createFile(profileImage);
+          employee.setFile(newProfileImage);
+      }
+
+      employee.update(updateRequest.name(), newEmail, newDepartment, updateRequest.position(),
+              updateRequest.hireDate(), updateRequest.status());
+      employeeRepository.save(employee);
+
+
+      // 직원 수정 이력 - '수정' 생성
+      historyService.createUpdateHistory(employee, updateRequest.memo());
 
       return employeeMapper.toEmployeeDto(employee);
   }

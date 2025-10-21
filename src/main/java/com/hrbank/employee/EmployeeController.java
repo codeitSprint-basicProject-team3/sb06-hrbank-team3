@@ -5,6 +5,9 @@ import com.hrbank.employee.dto.EmployeeDto;
 import com.hrbank.employee.dto.EmployeeTrendDto;
 import java.time.LocalDate;
 import java.util.List;
+
+import com.hrbank.employee.dto.EmployeeUpdateRequest;
+import com.hrbank.employee.mapper.EmployeeMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,6 +36,7 @@ public class EmployeeController {
               .body(createdEmployee);
   }
 
+
   @GetMapping("{id}")
   public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable("id") Long employeeId) {
 
@@ -42,6 +46,20 @@ public class EmployeeController {
               .status(HttpStatus.OK)
               .body(employee);
   }
+
+  @PatchMapping(path = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<EmployeeDto> updateEmployee(
+          @PathVariable("id") Long employeeId,
+          @RequestPart("employee") EmployeeUpdateRequest updateRequest,
+          @RequestPart(value = "profile", required = false) MultipartFile profileImage) {
+
+      EmployeeDto updatedEmployee = employeeService.updateEmployee(employeeId, updateRequest, profileImage);
+
+      return ResponseEntity
+              .status(HttpStatus.OK)
+              .body(updatedEmployee);
+  }
+
 
   @DeleteMapping("{id}")
   public ResponseEntity<Void> deleteEmployee(@PathVariable("id") Long employeeId) {
