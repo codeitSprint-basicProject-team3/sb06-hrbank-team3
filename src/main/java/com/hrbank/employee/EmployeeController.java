@@ -33,6 +33,16 @@ public class EmployeeController {
               .body(createdEmployee);
   }
 
+  @GetMapping("{id}")
+  public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable("id") Long employeeId) {
+
+      EmployeeDto employee = employeeService.getEmployeeById(employeeId);
+
+      return ResponseEntity
+              .status(HttpStatus.OK)
+              .body(employee);
+  }
+
   @DeleteMapping("{id}")
   public ResponseEntity<Void> deleteEmployee(@PathVariable("id") Long employeeId) {
       employeeService.deleteEmployee(employeeId);

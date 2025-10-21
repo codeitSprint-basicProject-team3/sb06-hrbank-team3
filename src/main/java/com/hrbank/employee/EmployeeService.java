@@ -73,6 +73,16 @@ public class EmployeeService{
       return employeeMapper.toEmployeeDto(newEmployee);
   }
 
+  // 직원 상세 조회
+  @Transactional(readOnly = true)
+  public EmployeeDto getEmployeeById(Long employeeId) {
+
+      Employee employee = employeeRepository.findById(employeeId)
+              .orElseThrow(() -> new NoSuchElementException("존재하지 않는 직원입니다."));
+
+      return employeeMapper.toEmployeeDto(employee);
+  }
+
   // 직원 삭제
   @Transactional
   public void deleteEmployee(Long employeeId) {
