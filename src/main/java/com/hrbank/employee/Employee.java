@@ -39,6 +39,7 @@ public class Employee {
   private String position;
   @Column(name = "joined_at",nullable = false)
   private LocalDate hireDate;
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private EmployeeStatus status;
   @ManyToOne(fetch = FetchType.EAGER)
