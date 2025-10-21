@@ -14,18 +14,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.UUID;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 @Entity
 @Table(name = "employees")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Employee {
@@ -44,11 +40,12 @@ public class Employee {
   @Column(name = "joined_at",nullable = false)
   private LocalDate hireDate;
   @Column(nullable = false)
-  private EmployeeStatus status = EmployeeStatus.ACTIVE;
+  private EmployeeStatus status;
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "department_id")
   private Department department;
   @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "profile_image_id")
   private File file;
+
 }
