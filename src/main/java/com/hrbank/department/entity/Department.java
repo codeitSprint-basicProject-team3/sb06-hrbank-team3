@@ -40,6 +40,6 @@ public class Department {
   private LocalDate establishedAt;
 
   @OneToMany(mappedBy = "department")
-  private List<Employee> employess = new ArrayList<>();
+  private List<Employee> employees = new ArrayList<>();
 
 }
