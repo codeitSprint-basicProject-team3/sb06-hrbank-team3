@@ -36,8 +36,8 @@ public class Department {
   @Column(name = "description", nullable = false, length = 255)
   private String description;
 
-  @Column(name = "established_at", nullable = false)
-  private LocalDate establishedAt;
+  @Column(name = "established_Date", nullable = false)
+  private LocalDate establishedDate;
 
   @OneToMany(mappedBy = "department")
   private List<Employee> employees = new ArrayList<>();
