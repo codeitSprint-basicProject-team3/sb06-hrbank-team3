@@ -1,5 +1,6 @@
 package com.hrbank.employee;
 
+import com.hrbank.file.File;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,8 +30,8 @@ import lombok.Setter;
 public class Employee {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
   @Column(nullable = false)
   private String name;
   @Column(unique = true, nullable = false)
@@ -39,8 +40,10 @@ public class Employee {
   private String title;
   @Column(name = "employee_number",unique = true, nullable = false)
   private String employeeNumber;
+  @Column(nullable = false)
+  private String position;
   @Column(name = "joined_at",nullable = false)
-  private Date joinedAt;
+  private Date hireDate;
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private EmployeeStatus status;
@@ -48,6 +51,6 @@ public class Employee {
   @JoinColumn(name = "department_id")
   private Department department;
   @OneToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "file_id")
+  @JoinColumn(name = "profile_image_id")
   private File file;
 }
