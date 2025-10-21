@@ -37,8 +37,6 @@ public class Employee {
   private String name;
   @Column(unique = true, nullable = false)
   private String email;
-  @Column(nullable = false)
-  private String title;
   @Column(name = "employee_number",unique = true, nullable = false)
   private String employeeNumber;
   @Column(nullable = false)
