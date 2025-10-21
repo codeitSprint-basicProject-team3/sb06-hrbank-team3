@@ -1,0 +1,24 @@
+package com.hrbank.department.dto.request;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+
+public record UpdateDepartmentRequest(
+    @NotBlank(message = "부서 이름은 필수입니다.")
+    @Schema(description = "부서 이름", example = "혁신개발팀")
+    String name,
+
+    @NotBlank(message = "부서 설명은 필수입니다.")
+    @Schema(description = "부서 설명", example = "차세대 소프트웨어 개발을 담당하는 부서")
+    String description,
+
+    @NotNull(message = "설립일은 필수입니다.")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Schema(description = "설립일", example = "2024-02-20")
+    LocalDate establishedAt
+) {
+
+}
