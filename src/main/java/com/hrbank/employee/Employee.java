@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -43,7 +44,7 @@ public class Employee {
   @Column(nullable = false)
   private String position;
   @Column(name = "joined_at",nullable = false)
-  private Date hireDate;
+  private LocalDate hireDate;
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private EmployeeStatus status;

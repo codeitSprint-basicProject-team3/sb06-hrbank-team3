@@ -16,7 +16,7 @@ public class FileController {
   private final FileStorage storage;
 
   @GetMapping("/{id}/download")
-  public ResponseEntity<?> fileDownload(
+  public ResponseEntity<?> downloadFile(
       @PathVariable Long id
   ) {
     File file = fileService.findById(id);
