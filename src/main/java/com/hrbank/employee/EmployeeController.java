@@ -33,6 +33,15 @@ public class EmployeeController {
               .body(createdEmployee);
   }
 
+  @DeleteMapping("{id}")
+  public ResponseEntity<Void> deleteEmployee(@PathVariable("id") Long employeeId) {
+      employeeService.deleteEmployee(employeeId);
+
+      return ResponseEntity
+              .status(HttpStatus.NO_CONTENT)
+              .build();
+  }
+
   @GetMapping("/stats/trend")
   public ResponseEntity<List<EmployeeTrendDto>> CountEmployee(
       @RequestParam LocalDate from,

@@ -6,6 +6,7 @@ import com.hrbank.employee.dto.EmployeeTrendDto;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import com.hrbank.employee.mapper.EmployeeMapper;
@@ -27,6 +28,7 @@ public class EmployeeService{
 
   private final FileService fileService;
 
+  // 직원 등록
   @Transactional
   public EmployeeDto createEmployee(EmployeeCreateRequest createRequest, MultipartFile profileImage) {
 
@@ -69,6 +71,28 @@ public class EmployeeService{
       historyService.createCreateHistory(newEmployee, createRequest.memo());
 
       return employeeMapper.toEmployeeDto(newEmployee);
+  }
+
+  // 직원 삭제
+  @Transactional
+  public void deleteEmployee(Long employeeId) {
+
+      // 직원 조회
+      Employee employee = employeeRepository.findById(employeeId)
+              .orElseThrow(() -> new NoSuchElementException("존재하지 않는 직원입니다."));
+
+      // 프로필 삭제
+      File profileFile = employee.getFile();
+      if (profileFile != null) {
+          employee.setFile(null);
+          fileService.deleteFile(profileFile);
+      }
+
+      // 직원 수정 이력 - '삭제' 생성
+      historyService.createResignHistory(employee);
+
+      // 직원 상태 '퇴사'로 수정
+      employee.setStatus(EmployeeStatus.RESIGNED);
   }
 
   public List<EmployeeTrendDto> countEmployeeByUnit(LocalDate from, LocalDate to, String unit){
