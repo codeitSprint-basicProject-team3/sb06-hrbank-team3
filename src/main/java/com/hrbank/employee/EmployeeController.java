@@ -19,12 +19,21 @@ public class EmployeeController {
   private final EmployeeService employeeService;
 
   @GetMapping("/stats/trend")
-  public ResponseEntity<List<EmployeeTrendDto>> CountEmployee(
+  public ResponseEntity<List<EmployeeTrendDto>> getCountByTrend(
       @RequestParam LocalDate from,
       @RequestParam LocalDate to,
       @RequestParam(defaultValue = "month") String unit
   ) {
     List<EmployeeTrendDto> numberList = employeeService.countEmployeeByUnit(from,to,unit);
     return ResponseEntity.ok(numberList);
+  }
+
+  @GetMapping("/count")
+  public ResponseEntity<Long> getCountByDateRange(
+      @RequestParam EmployeeStatus status,
+      @RequestParam LocalDate fromDate,
+      @RequestParam LocalDate toDate
+  ){
+    return ResponseEntity.ok(employeeService.countEmployeesHiredBetween(status, fromDate, toDate));
   }
 }
