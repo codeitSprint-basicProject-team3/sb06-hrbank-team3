@@ -45,7 +45,7 @@ public class EmployeeController {
   }
 
   @GetMapping("/stats/distribution")
-  public ResponseEntity<EmployeeDistributionDto> getEmployeeDistribution(
+  public ResponseEntity<List<EmployeeDistributionDto>> getEmployeeDistribution(
       @RequestParam String groupBy,
       @RequestParam(defaultValue = "ACTIVE") EmployeeStatus status
   ){

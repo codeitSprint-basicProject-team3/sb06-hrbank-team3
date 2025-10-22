@@ -1,6 +1,7 @@
 package com.hrbank.employee;
 
 import java.time.LocalDate;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,10 +15,10 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
   Long countAllByStatusAndHireDateBetween(EmployeeStatus status, LocalDate fromDate, LocalDate toDate);
 
   @Query(value = "SELECT COUNT(e) FROM Employee e WHERE e.status = :status GROUP BY e.department")
-  Long countAllByStatusGroupByDepartment(EmployeeStatus status);
+  List<Object[]> countAllByStatusGroupByDepartment(EmployeeStatus status);
 
   @Query(value = "SELECT COUNT(e) FROM Employee e WHERE e.status = :status GROUP BY e.position")
-  Long countAllByStatusGroupByPosition(EmployeeStatus status);
+  List<Object[]> countAllByStatusGroupByPosition(EmployeeStatus status);
 
   Long countAllByStatus(EmployeeStatus status);
 }

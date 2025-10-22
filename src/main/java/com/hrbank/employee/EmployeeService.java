@@ -9,6 +9,7 @@ import com.hrbank.file.File;
 import com.hrbank.file.FileService;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -83,20 +84,27 @@ public class EmployeeService{
   }
 
   @Transactional(readOnly = true)
-  public EmployeeDistributionDto findDistributedEmployee(String groupBy, EmployeeStatus status) {
+  public List<EmployeeDistributionDto> findDistributedEmployee(String groupBy, EmployeeStatus status) {
     Long statusCount = employeeRepository.countAllByStatus(status);
-    Long count;
-    double percentage;
     if (groupBy.equals("department")) {
-      count = employeeRepository.countAllByStatusGroupByDepartment(status);
-      percentage = count * 100.0 / statusCount;
-      return new EmployeeDistributionDto("department", count, percentage);
+      List<Object[]> result = employeeRepository.countAllByStatusGroupByDepartment(status);
+      return toDtoList(result, statusCount);
     } else if (groupBy.equals("position")) {
-      count = employeeRepository.countAllByStatusGroupByPosition(status);
-      percentage = count * 100.0 / statusCount;
-      return new EmployeeDistributionDto("position", count, percentage);
+      List<Object[]> result = employeeRepository.countAllByStatusGroupByPosition(status);
+      return toDtoList(result, statusCount);
     }
     throw new IllegalArgumentException("정해지지 않은 분류 조건입니다: " + groupBy);
+  }
+
+  public List<EmployeeDistributionDto> toDtoList(List<Object[]> result, Long statusCount) {
+    List<EmployeeDistributionDto> dtoList = new ArrayList<>();
+    for (Object[] row : result) {
+      String groupKey = (String) row[0];
+      Long count = (Long) row[1];
+      double percentage = count * 100.0 / statusCount;
+      dtoList.add(new EmployeeDistributionDto(groupKey, count, percentage));
+    }
+    return dtoList;
   }
 
 }
