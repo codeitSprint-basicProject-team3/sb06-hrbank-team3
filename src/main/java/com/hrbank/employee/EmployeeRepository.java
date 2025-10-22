@@ -1,5 +1,6 @@
 package com.hrbank.employee;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,8 +10,10 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
 
   Boolean existsByEmail(String email);
 
-  @Query
-  List<Object[]> countAllByHireDateAndDate(LocalDate date, String unit);
+  Long countAllByStatusAndHireDateLessThanEqual(EmployeeStatus activeStatus, LocalDate current);
+
+  @Query("SELECT COUNT(e) FROM Employee e WHERE e.status = :resignedStatus AND :currentInstant BETWEEN e.createdAt and e.updatedAt")
+  Long countAllByStatusAtInstant(EmployeeStatus resignedStatus, Instant currentInstant);
 
   Long countAllByStatusAndHireDateBetween(EmployeeStatus status, LocalDate fromDate, LocalDate toDate);
 

@@ -72,17 +72,16 @@ public class EmployeeController {
 
   @GetMapping("/stats/trend")
   public ResponseEntity<List<EmployeeTrendDto>> getCountByTrend(
-      @RequestParam LocalDate from,
-      @RequestParam LocalDate to,
+      @RequestParam(required = false) LocalDate from,
+      @RequestParam(required = false) LocalDate to,
       @RequestParam(defaultValue = "month") String unit
   ) {
-    List<EmployeeTrendDto> numberList = employeeService.countEmployeeByUnit(from,to,unit);
-    return null;
+    return ResponseEntity.ok(employeeService.getEmployeeChangeTrend(from,to,unit));
   }
 
   @GetMapping("/stats/distribution")
   public ResponseEntity<List<EmployeeDistributionDto>> getEmployeeDistribution(
-      @RequestParam String groupBy,
+      @RequestParam(defaultValue = "department") String groupBy,
       @RequestParam(defaultValue = "ACTIVE") EmployeeStatus status
   ){
       return ResponseEntity.ok(employeeService.findDistributedEmployee(groupBy, status));
@@ -91,8 +90,8 @@ public class EmployeeController {
   @GetMapping("/count")
   public ResponseEntity<Long> getCountByDateRange(
       @RequestParam EmployeeStatus status,
-      @RequestParam LocalDate fromDate,
-      @RequestParam LocalDate toDate
+      @RequestParam(required = false) LocalDate fromDate,
+      @RequestParam(required = false) LocalDate toDate
   ){
     return ResponseEntity.ok(employeeService.countEmployeesHiredBetween(status, fromDate, toDate));
   }
