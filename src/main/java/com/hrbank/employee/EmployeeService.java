@@ -85,15 +85,16 @@ public class EmployeeService{
   @Transactional(readOnly = true)
   public EmployeeDistributionDto findDistributedEmployee(String groupBy, EmployeeStatus status) {
     Long statusCount = employeeRepository.countAllByStatus(status);
+    Long count;
     double percentage;
     if (groupBy.equals("department")) {
-      Long num = employeeRepository.countAllByStatusGroupByDepartment(status);
-      percentage = num * 100.0 / statusCount;
-      return new EmployeeDistributionDto("department", num, percentage);
+      count = employeeRepository.countAllByStatusGroupByDepartment(status);
+      percentage = count * 100.0 / statusCount;
+      return new EmployeeDistributionDto("department", count, percentage);
     } else if (groupBy.equals("position")) {
-      Long num = employeeRepository.countAllByStatusGroupByPosition(status);
-      percentage = num * 100.0 / statusCount;
-      return new EmployeeDistributionDto("position", num, percentage);
+      count = employeeRepository.countAllByStatusGroupByPosition(status);
+      percentage = count * 100.0 / statusCount;
+      return new EmployeeDistributionDto("position", count, percentage);
     }
     throw new IllegalArgumentException("정해지지 않은 분류 조건입니다: " + groupBy);
   }
