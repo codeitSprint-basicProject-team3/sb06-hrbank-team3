@@ -152,7 +152,11 @@ public class EmployeeService{
       employee.setStatus(EmployeeStatus.RESIGNED);
   }
 
-
+  /*
+  # 직원 증감 추이 조회
+  조건 1. 현재 재직 중
+  조건 2. 현재 퇴직 상태이지만 조회하려는 시기가 createdAt과 updatedAt 사이에 있는 경우 (퇴직->재직이 없다는 전제)
+   */
   @Transactional(readOnly = true)
   public List<EmployeeTrendDto> countEmployeeByUnit(LocalDate from, LocalDate to, String unit){
     List<EmployeeTrendDto> dtoList = new ArrayList<>();
@@ -180,6 +184,12 @@ public class EmployeeService{
     return employeeRepository.countAllByStatusAndHireDateBetween(status, fromDate, toDate);
   }
 
+  /*
+  # 직원 분포 조회
+  조건1. 현재 재직 중
+  조건2. 부서별/직함별 분류
+  조건3. 세부이름을 기준으로 데이터를 리스트로 반환
+   */
   @Transactional(readOnly = true)
   public List<EmployeeDistributionDto> findDistributedEmployee(String groupBy, EmployeeStatus status) {
     Long statusCount = employeeRepository.countAllByStatus(status);
