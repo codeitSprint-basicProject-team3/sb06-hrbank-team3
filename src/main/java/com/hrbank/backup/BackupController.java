@@ -1,11 +1,16 @@
 package com.hrbank.backup;
 
+import com.hrbank.backup.dto.BackupDto;
+import com.hrbank.backup.dto.BackupRequestDto;
+import com.hrbank.backup.dto.CursorPageBackupDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("api/backups")
@@ -23,10 +28,8 @@ public class BackupController {
     }
 
     @GetMapping
-    public ResponseEntity<CursorPageBackupDto<BackupDto>> findAll(
-            @RequestParam(required = false) Long cursor,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(backupService.findAll(cursor, size));
+    public ResponseEntity<CursorPageBackupDto<BackupDto>> findAll(@ModelAttribute BackupRequestDto requestDto) {
+        return ResponseEntity.ok(backupService.findAll(requestDto));
     }
 
     @GetMapping("/latest")

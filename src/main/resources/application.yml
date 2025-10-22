@@ -20,3 +20,9 @@ spring:
 
 server:
   port: 8080
+
+# 백업 배치
+hrbank:
+  backup:
+    schedule:
+      cron: "0 0 * * * *"   # 매 정시마다 (1시간 간격)

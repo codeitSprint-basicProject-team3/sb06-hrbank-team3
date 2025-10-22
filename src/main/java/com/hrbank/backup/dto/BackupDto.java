@@ -1,5 +1,6 @@
-package com.hrbank.backup;
+package com.hrbank.backup.dto;
 
+import com.hrbank.backup.Backup;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
