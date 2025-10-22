@@ -75,7 +75,24 @@ public class EmployeeService{
 
   @Transactional(readOnly = true)
   public List<EmployeeTrendDto> countEmployeeByUnit(LocalDate from, LocalDate to, String unit){
-    return null;
+    List<EmployeeTrendDto> dtoList = new ArrayList<>();
+    switch (unit) {
+      case "day":
+        LocalDate currentDay = from;
+        LocalDate nextDay = from.plusDays(1);
+        break;
+      case "week":
+        break;
+      case "month":
+        break;
+      case "quarter":
+        break;
+      case "year":
+        break;
+      default:
+        break;
+    }
+    return dtoList;
   }
 
   @Transactional(readOnly = true)
@@ -96,7 +113,7 @@ public class EmployeeService{
     throw new IllegalArgumentException("정해지지 않은 분류 조건입니다: " + groupBy);
   }
 
-  public List<EmployeeDistributionDto> toDtoList(List<Object[]> result, Long statusCount) {
+  private List<EmployeeDistributionDto> toDtoList(List<Object[]> result, Long statusCount) {
     List<EmployeeDistributionDto> dtoList = new ArrayList<>();
     for (Object[] row : result) {
       String groupKey = (String) row[0];
