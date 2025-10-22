@@ -1,14 +1,15 @@
 package com.hrbank.employee;
 
-import com.hrbank.employee.dto.EmployeeDistributionDto;
-import com.hrbank.employee.dto.EmployeeCreateRequest;
-import com.hrbank.employee.dto.EmployeeDto;
-import com.hrbank.employee.dto.EmployeeTrendDto;
+import com.hrbank.employee.dto.*;
+
 import java.time.LocalDate;
 import java.util.List;
 
-import com.hrbank.employee.dto.EmployeeUpdateRequest;
+import com.hrbank.employee.enums.EmployeeStatus;
+import com.hrbank.employee.enums.SortDirection;
+import com.hrbank.employee.enums.SortField;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -69,6 +70,28 @@ public class EmployeeController {
               .status(HttpStatus.NO_CONTENT)
               .build();
   }
+
+  @GetMapping
+  public ResponseEntity<CursorPageResponseEmployeeDto> getEmployeesByFilter(
+          // 검색 조건
+          @RequestParam(required = false) String nameOrEmail,
+          @RequestParam(required = false) String employeeNumber,
+          @RequestParam(required = false) String departmentName,
+          @RequestParam(required = false) String position,
+          @RequestParam(required = false) LocalDate hireDateFrom,
+          @RequestParam(required = false) LocalDate hireDateTo,
+          @RequestParam(required = false) EmployeeStatus status,
+          // 페이징, 커서
+          @RequestParam(required = false) Long idAfter,
+          @RequestParam(required = false) String cursor,
+          // 정렬, 크기
+          @RequestParam(defaultValue = "10") Integer size,
+          @RequestParam(defaultValue = "name") SortField sortField,
+          @RequestParam(defaultValue = "asc") SortDirection sortDirection
+  ) {
+
+  }
+
 
   @GetMapping("/stats/trend")
   public ResponseEntity<List<EmployeeTrendDto>> getCountByTrend(
