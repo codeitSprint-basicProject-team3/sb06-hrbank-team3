@@ -4,6 +4,7 @@ import com.hrbank.employee.dto.EmployeeCreateRequest;
 import com.hrbank.employee.dto.EmployeeDistributionDto;
 import com.hrbank.employee.dto.EmployeeDto;
 import com.hrbank.employee.dto.EmployeeTrendDto;
+import com.hrbank.employee.enums.EmployeeStatus;
 import com.hrbank.employee.mapper.EmployeeMapper;
 import com.hrbank.file.File;
 import com.hrbank.file.FileService;
