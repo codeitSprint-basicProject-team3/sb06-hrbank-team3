@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class EmployeeService{
 
   private final EmployeeRepository employeeRepository;
@@ -27,7 +28,6 @@ public class EmployeeService{
 
   private final FileService fileService;
 
-  @Transactional
   public EmployeeDto createEmployee(EmployeeCreateRequest createRequest,
       MultipartFile profileImage) {
 
@@ -72,14 +72,17 @@ public class EmployeeService{
     return employeeMapper.toEmployeeDto(newEmployee);
   }
 
+  @Transactional(readOnly = true)
   public List<EmployeeTrendDto> countEmployeeByUnit(LocalDate from, LocalDate to, String unit){
     return null;
   }
 
+  @Transactional(readOnly = true)
   public Long countEmployeesHiredBetween(EmployeeStatus status, LocalDate fromDate, LocalDate toDate) {
     return employeeRepository.countAllByStatusAndHireDateBetween(status, fromDate, toDate);
   }
 
+  @Transactional(readOnly = true)
   public EmployeeDistributionDto findDistributedEmployee(String groupBy, EmployeeStatus status) {
     Long statusCount = employeeRepository.countAllByStatus(status);
     double percentage;
