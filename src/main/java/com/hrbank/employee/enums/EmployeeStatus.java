@@ -1,4 +1,4 @@
-package com.hrbank.employee;
+package com.hrbank.employee.enums;
 
 public enum EmployeeStatus {
   ACTIVE,

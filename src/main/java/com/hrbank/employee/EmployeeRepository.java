@@ -1,6 +1,8 @@
 package com.hrbank.employee;
 
 import java.time.LocalDate;
+
+import com.hrbank.employee.enums.EmployeeStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

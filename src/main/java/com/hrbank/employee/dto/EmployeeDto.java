@@ -1,6 +1,6 @@
 package com.hrbank.employee.dto;
 
-import com.hrbank.employee.EmployeeStatus;
+import com.hrbank.employee.enums.EmployeeStatus;
 
 import java.time.LocalDate;
 
