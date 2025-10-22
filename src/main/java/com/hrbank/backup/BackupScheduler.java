@@ -17,7 +17,7 @@ public class BackupScheduler {
     @Scheduled(cron = "#{@backupScheduleProperties.cron}")
     public void runBackupJob() {
         log.info("자동 백업 실행 시작 (작업자=system)");
-        backupService.createSystemBackup();
+        backupService.start("system");
         log.info("자동 백업 완료.");
     }
 }

@@ -21,7 +21,7 @@ public class BackupService {
 //    private final EmployeeRepository employeeRepository;
 
     @Transactional
-    public BackupDto create(String worker){
+    public BackupDto start(String worker){
 
         // 가장 최근 완료된 백업 불러옴
         Backup lastBackup = backupRepository.findFirstByStatusOrderByEndedAtDesc(Backup.BackupStatus.COMPLETED)
@@ -61,7 +61,7 @@ public class BackupService {
 
         // 기본값 처리
         int size = dto.size() != null ? dto.size() : 10;
-        String sortField = dto.sortField() != null ? dto.sortField() : "startedAt";
+        SortField sortField = dto.sortField() != null ? dto.sortField() : SortField.STARTED_AT;
         SortDirection sortDirection = dto.sortDirection() != null ? dto.sortDirection() : SortDirection.DESC;
 
         // 커서 페이징 설정
@@ -69,7 +69,7 @@ public class BackupService {
         Slice<Backup> slice;
 
         // 필터링 조건과 JPA메서드 연결
-        if (sortField.equals("startedAt")) {
+        if (sortField == SortField.STARTED_AT) {
             if (sortDirection == SortDirection.DESC) {
                 if (dto.idAfter() == null) {
                     // 첫 페이지
@@ -89,7 +89,7 @@ public class BackupService {
                             dto.idAfter(), dto.startedAtFrom(), dto.startedAtTo(), dto.worker(), dto.status(), pageable);
                 }
             }
-        } else { // sortField.equals("endedAt")
+        } else { // sortField == SortField.ENDED_AT
             if (sortDirection == SortDirection.DESC) {
                 if (dto.idAfter() == null) {
                     slice = backupRepository.findAllByEndedAtDesc(

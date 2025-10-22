@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-
 @RestController
 @RequestMapping("api/backups")
 @RequiredArgsConstructor
@@ -23,7 +21,7 @@ public class BackupController {
     @PostMapping
     public ResponseEntity<BackupDto> create(HttpServletRequest request) {
         String clientIp = IpUtils.extractClientIp(request);
-        BackupDto response = backupService.create(clientIp);
+        BackupDto response = backupService.start(clientIp);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
