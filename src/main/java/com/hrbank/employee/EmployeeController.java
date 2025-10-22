@@ -1,5 +1,6 @@
 package com.hrbank.employee;
 
+import com.hrbank.employee.dto.EmployeeDistributionDto;
 import com.hrbank.employee.dto.EmployeeCreateRequest;
 import com.hrbank.employee.dto.EmployeeDto;
 import com.hrbank.employee.dto.EmployeeTrendDto;
@@ -34,12 +35,29 @@ public class EmployeeController {
   }
 
   @GetMapping("/stats/trend")
-  public ResponseEntity<List<EmployeeTrendDto>> CountEmployee(
+  public ResponseEntity<List<EmployeeTrendDto>> getCountByTrend(
       @RequestParam LocalDate from,
       @RequestParam LocalDate to,
       @RequestParam(defaultValue = "month") String unit
   ) {
     List<EmployeeTrendDto> numberList = employeeService.countEmployeeByUnit(from,to,unit);
-    return ResponseEntity.ok(numberList);
+    return null;
+  }
+
+  @GetMapping("/stats/distribution")
+  public ResponseEntity<EmployeeDistributionDto> getEmployeeDistribution(
+      @RequestParam String groupBy,
+      @RequestParam(defaultValue = "ACTIVE") EmployeeStatus status
+  ){
+      return ResponseEntity.ok(employeeService.findDistributedEmployee(groupBy, status));
+  }
+
+  @GetMapping("/count")
+  public ResponseEntity<Long> getCountByDateRange(
+      @RequestParam EmployeeStatus status,
+      @RequestParam LocalDate fromDate,
+      @RequestParam LocalDate toDate
+  ){
+    return ResponseEntity.ok(employeeService.countEmployeesHiredBetween(status, fromDate, toDate));
   }
 }
