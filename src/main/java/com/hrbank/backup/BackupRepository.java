@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface BackupRepository extends JpaRepository<Backup, Long> {
 
     // TODO QueryDSL로 메서드 간추리기
-    // TODO 커서기준 개선 필요 idAfter만 쓰면 동일 시간인 데이터는 하나만 가져오게됨.
+    // TODO 커서 기준 개선 필요 idAfter만 쓰면 동일 시간인 데이터는 하나만 가져오게됨.
 
     // 기본값
     @Query("""

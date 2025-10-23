@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @ParameterObject
 @Builder
-public record BackupRequestDto(
+public record BackupFindRequestDto(
         String worker,
         Backup.BackupStatus status,
         LocalDateTime startedAtFrom,

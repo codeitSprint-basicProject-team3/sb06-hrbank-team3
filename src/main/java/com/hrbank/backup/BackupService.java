@@ -1,14 +1,19 @@
 package com.hrbank.backup;
 
+import com.hrbank.exception.NotFoundException;
 import com.hrbank.backup.dto.BackupDto;
-import com.hrbank.backup.dto.BackupRequestDto;
-import com.hrbank.backup.dto.CursorPageBackupDto;
+import com.hrbank.backup.dto.BackupFindRequestDto;
+import com.hrbank.backup.dto.CursorPageResponseBackupDto;
+import com.hrbank.backup.util.CsvBackupWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,6 +24,7 @@ public class BackupService {
 
     private final BackupRepository backupRepository;
 //    private final EmployeeRepository employeeRepository;
+    private final CsvBackupWriter csvBackupWriter;
 
     @Transactional
     public BackupDto start(String worker){
@@ -42,8 +48,6 @@ public class BackupService {
             return BackupDto.from(backupRepository.save(skipped));
         }
 
-        // TODO CSV 파일 생성해서 build()
-
         Backup backup = Backup.builder()
                 .worker(worker)
                 .startedAt(LocalDateTime.now())
@@ -51,13 +55,39 @@ public class BackupService {
                 // .file()
                 .build();
         backupRepository.save(backup);
-        backup.setEndedAt(LocalDateTime.now());
-        backup.setStatus(Backup.BackupStatus.COMPLETED);
-        return BackupDto.from(backup);
+
+        // CSV 파일 생성 -> 로컬에 파일을, DB에 메타데이터를 저장
+        try {
+            // 로컬에 파일 저장
+            Path backupFile = csvBackupWriter.writeEmployeeBackup(backup.getId());
+
+            // DB에 메타데이터 저장
+            File newFile = File.builder()
+                    .name(backupFile.getFileName().toString().replaceFirst("\\.csv$", ""))
+                    .extension("csv")
+                    .size(Files.size(backupFile))
+                    .build();
+            backup.setFile(newFile);
+
+            backup.setEndedAt(LocalDateTime.now());
+            backup.setStatus(Backup.BackupStatus.COMPLETED);
+        } catch (Exception e) {
+            log.error("백업 실패", e);
+            try {
+                Files.deleteIfExists(backupFile);
+            } catch (IOException ioException) {
+                log.error("백업 파일 삭제 실패", ioException);
+            }
+            backup.setStatus(Backup.BackupStatus.FAILED);
+        } finally {
+            backup.setEndedAt(LocalDateTime.now());
+        }
+
+        return BackupDto.from(backupRepository.save(backup)); // save 호출 안해도 저장되지만 명시해둠.
     }
 
     @Transactional(readOnly = true)
-    public CursorPageBackupDto<BackupDto> findAll(BackupRequestDto dto) {
+    public CursorPageResponseBackupDto<BackupDto> findAll(BackupFindRequestDto dto) {
 
         // 기본값 처리
         int size = dto.size() != null ? dto.size() : 10;
@@ -118,7 +148,7 @@ public class BackupService {
         Long nextIdAfter = content.isEmpty() ? null : content.get(content.size() - 1).id();
         String nextCursor = nextIdAfter != null ? nextIdAfter.toString() : null;
 
-        return new CursorPageBackupDto<>(
+        return new CursorPageResponseBackupDto<>(
                 content,
                 nextCursor,
                 nextIdAfter,
@@ -128,10 +158,11 @@ public class BackupService {
         );
     }
 
+    // 아마 대시보드에서 사용할듯? - 마지막 백업 n일 전
     @Transactional(readOnly = true)
     public BackupDto findLatest(Backup.BackupStatus status) {
         Backup backup = backupRepository.findFirstByStatusOrderByEndedAtDesc(status)
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundException("백업이 존재하지 않습니다."));
         return BackupDto.from(backup);
     }
 }

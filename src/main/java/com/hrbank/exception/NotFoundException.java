@@ -1,4 +1,4 @@
-package com.hrbank;
+package com.hrbank.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

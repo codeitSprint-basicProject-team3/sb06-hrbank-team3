@@ -21,8 +21,16 @@ spring:
 server:
   port: 8080
 
-# 백업 배치
+# 백업 Batch 설정
 hrbank:
   backup:
     schedule:
       cron: "0 0 * * * *"   # 매 정시마다 (1시간 간격)
+
+# 에러 로그 저장 설정
+logging:
+  file:
+    name: logs/backup.log  # 로그 파일 경로 (자동 생성됨)
+  level:
+    root: INFO             # 전체 로그 레벨
+    com.hrbank: DEBUG    # 우리 패키지 로그만 더 자세히

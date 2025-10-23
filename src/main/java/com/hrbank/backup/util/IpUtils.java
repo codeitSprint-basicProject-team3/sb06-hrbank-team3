@@ -1,12 +1,12 @@
-package com.hrbank.backup;
+package com.hrbank.backup.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+// 정적 메서도만 제공하므로 @Component 필요 없음
 public class IpUtils {
 
-    private IpUtils() {
-        // 유틸 클래스이므로 인스턴스화 방지
-    }
+    // 유틸 클래스는 private 생성자로 인스턴스화를 막는 게 관례
+    private IpUtils() {}
 
     public static String extractClientIp(HttpServletRequest request) {
         // 프록시나 로드밸런서를 거쳤을 때 원래 클라이언트 IP가 담길 수 있는 헤더들

@@ -1,8 +1,9 @@
 package com.hrbank.backup;
 
 import com.hrbank.backup.dto.BackupDto;
-import com.hrbank.backup.dto.BackupRequestDto;
-import com.hrbank.backup.dto.CursorPageBackupDto;
+import com.hrbank.backup.dto.BackupFindRequestDto;
+import com.hrbank.backup.dto.CursorPageResponseBackupDto;
+import com.hrbank.backup.util.IpUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +27,8 @@ public class BackupController {
     }
 
     @GetMapping
-    public ResponseEntity<CursorPageBackupDto<BackupDto>> findAll(@ModelAttribute BackupRequestDto requestDto) {
-        return ResponseEntity.ok(backupService.findAll(requestDto));
+    public ResponseEntity<CursorPageResponseBackupDto<BackupDto>> findAll(@ModelAttribute BackupFindRequestDto dto) {
+        return ResponseEntity.ok(backupService.findAll(dto));
     }
 
     @GetMapping("/latest")
