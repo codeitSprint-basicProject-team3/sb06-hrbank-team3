@@ -254,14 +254,13 @@ public class EmployeeService{
   @Transactional(readOnly = true)
   public List<EmployeeDistributionDto> findDistributedEmployee(EmployeeGroupBy groupBy, EmployeeStatus status) {
     Long statusCount = employeeRepository.countAllByStatus(status);
+    List<Object[]> result;
     if (EmployeeGroupBy.DEPARTMENT.equals(groupBy)) {
-      List<Object[]> result = employeeRepository.countAllByStatusGroupByDepartment(status);
-      return toDtoList(result, statusCount);
-    } else if (EmployeeGroupBy.POSITION.equals(groupBy)) {
-      List<Object[]> result = employeeRepository.countAllByStatusGroupByPosition(status);
-      return toDtoList(result, statusCount);
+      result = employeeRepository.countAllByStatusGroupByDepartment(status);
+    } else {  // POSITION
+      result = employeeRepository.countAllByStatusGroupByPosition(status);
     }
-    throw new IllegalArgumentException("정해지지 않은 분류 조건입니다: " + groupBy);
+    return toDtoList(result, statusCount);
   }
 
   private List<EmployeeDistributionDto> toDtoList(List<Object[]> result, Long statusCount) {
