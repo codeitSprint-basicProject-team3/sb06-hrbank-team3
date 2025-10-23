@@ -157,7 +157,7 @@ public class EmployeeService{
 
   /*
   # 직원 증감 추이 조회
-  조건 1. 현재 재직 중이고 조회하려는 시기가 입사일 이후
+  조건 1. 현재 퇴직 상태가 아니고 (재직중,휴가중) 조회하려는 시기가 입사일 이후
   조건 2. 현재 퇴직 상태이지만 조회하려는 시기가 createdAt과 updatedAt 사이에 있는 경우 (퇴직->재직이 없다는 전제)
   조건 3. from 기본값: 현재로부터 unit 기준 12개 이전 (12달 이전)
   조건 4. to 기본값: 현재
@@ -236,7 +236,7 @@ public class EmployeeService{
   // 조건 1 + 조건 2
   public Long employeeNumberThisDay(LocalDate date) {
     Instant toInstant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
-    return employeeRepository.countAllByStatusAndHireDateLessThanEqual(EmployeeStatus.ACTIVE, date)
+    return employeeRepository.countAllByStatusNotAndHireDateLessThanEqual(EmployeeStatus.RESIGNED, date)
         + employeeRepository.countAllByStatusAtInstant(EmployeeStatus.RESIGNED, toInstant);
   }
 

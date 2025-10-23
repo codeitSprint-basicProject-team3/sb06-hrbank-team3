@@ -11,7 +11,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
 
   Boolean existsByEmail(String email);
 
-  Long countAllByStatusAndHireDateLessThanEqual(EmployeeStatus activeStatus, LocalDate current);
+  Long countAllByStatusNotAndHireDateLessThanEqual(EmployeeStatus resignedStatus,  LocalDate current);
 
   @Query("SELECT COUNT(e) FROM Employee e WHERE e.status = :resignedStatus AND :currentInstant BETWEEN e.createdAt and e.updatedAt")
   Long countAllByStatusAtInstant(EmployeeStatus resignedStatus, Instant currentInstant);
