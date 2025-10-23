@@ -4,17 +4,22 @@ import com.hrbank.employee.dto.EmployeeCreateRequest;
 import com.hrbank.employee.dto.EmployeeDistributionDto;
 import com.hrbank.employee.dto.EmployeeDto;
 import com.hrbank.employee.dto.EmployeeTrendDto;
+import com.hrbank.employee.dto.EmployeeUpdateRequest;
+import com.hrbank.employee.enums.EmployeeGroupBy;
 import com.hrbank.employee.enums.EmployeeStatus;
+import com.hrbank.employee.enums.PeriodUnit;
 import com.hrbank.employee.mapper.EmployeeMapper;
 import com.hrbank.file.File;
 import com.hrbank.file.FileService;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
-
-import com.hrbank.employee.dto.EmployeeUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -152,32 +157,121 @@ public class EmployeeService{
       employee.setStatus(EmployeeStatus.RESIGNED);
   }
 
-
+  /*
+  # 직원 증감 추이 조회
+  조건 1. 현재 퇴직 상태가 아니고 (재직중,휴가중) 조회하려는 시기가 입사일 이후
+  조건 2. 현재 퇴직 상태이지만 조회하려는 시기가 createdAt과 updatedAt 사이에 있는 경우 (퇴직->재직이 없다는 전제)
+  조건 3. from 기본값: 현재로부터 unit 기준 12개 이전 (12달 이전)
+  조건 4. to 기본값: 현재
+  조건 5. unit 기본값: month
+   */
   @Transactional(readOnly = true)
-  public List<EmployeeTrendDto> countEmployeeByUnit(LocalDate from, LocalDate to, String unit){
-    return null;
+  public List<EmployeeTrendDto> getEmployeeChangeTrend(LocalDate from, LocalDate to, PeriodUnit unit) {
+    if (from == null) {
+      from = LocalDate.now().minusMonths(12);
+    }
+    if (to == null) {
+      to = LocalDate.now();
+    }
+    List<EmployeeTrendDto> dtoList = new ArrayList<>();
+    Period period = switch (unit) {
+      case DAY -> Period.ofDays(1);
+      case WEEK -> Period.ofWeeks(1);
+      case MONTH -> Period.ofMonths(1);
+      case QUARTER -> Period.ofMonths(3);
+      case YEAR -> Period.ofYears(1);
+    };
+    collectTrendByPeriod(period, from, to, dtoList);
+    return dtoList;
   }
 
+  public void collectTrendByPeriod(Period period, LocalDate from, LocalDate to,
+      List<EmployeeTrendDto> dtoList) {
+    LocalDate current = from;
+    LocalDate previous = current.minus(period);
+    LocalDate next = current.plus(period);
+    if (previous.isBefore(from)) {
+      previous = null;
+    }
+    while (!current.isAfter(to)) {
+      addDtoList(previous, current, dtoList);
+      previous = current;
+      current = next;
+      next = next.plus(period);
+    }
+  }
+
+  // 기준 날짜, 직원 수, 증감, 증감률
+  public void addDtoList(LocalDate previous, LocalDate current, List<EmployeeTrendDto> dtoList) {
+    Long currentEmployeeNum = employeeNumberThisDay(current);
+    if (previous == null) {
+      dtoList.add(
+          new EmployeeTrendDto(current, currentEmployeeNum, 0L, 0.0)
+      );
+      return;
+    }
+    Long previousEmployeeNum = employeeNumberThisDay(previous);
+    dtoList.add(
+        new EmployeeTrendDto(
+            current,
+            currentEmployeeNum,
+            currentEmployeeNum - previousEmployeeNum,
+            (currentEmployeeNum - previousEmployeeNum) * 100.0 / previousEmployeeNum)
+    );
+  }
+
+  // 조건 1 + 조건 2
+  public Long employeeNumberThisDay(LocalDate date) {
+    Instant toInstant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
+    return employeeRepository.countAllByStatusNotAndHireDateLessThanEqual(EmployeeStatus.RESIGNED, date)
+        + employeeRepository.countAllByStatusAtInstant(EmployeeStatus.RESIGNED, toInstant);
+  }
+
+  /*
+  # 직원 수 조회
+  조건 1. 현재 직원 상태
+  조건 2. 주어진 기간 내 입사한 직원 수 조회
+  조건 3. fromDate 미지정 시 현재 직원 상태에 따른 전체 직원 수 조회
+  조건 4. toDate 기본값 현재 일시
+   */
   @Transactional(readOnly = true)
   public Long countEmployeesHiredBetween(EmployeeStatus status, LocalDate fromDate, LocalDate toDate) {
+    if (fromDate == null) {
+      return employeeRepository.countAllByStatus(status);
+    }
+    if (toDate == null) {
+      toDate = LocalDate.now();
+    }
     return employeeRepository.countAllByStatusAndHireDateBetween(status, fromDate, toDate);
   }
 
+  /*
+  # 직원 분포 조회
+  조건 1. 현재 직원 상태, 기본값은 재직중
+  조건 2. 부서별/직함별 분류
+  조건 3. 세부이름을 기준으로 데이터를 리스트로 반환
+   */
   @Transactional(readOnly = true)
-  public EmployeeDistributionDto findDistributedEmployee(String groupBy, EmployeeStatus status) {
+  public List<EmployeeDistributionDto> findDistributedEmployee(EmployeeGroupBy groupBy, EmployeeStatus status) {
     Long statusCount = employeeRepository.countAllByStatus(status);
-    Long count;
-    double percentage;
-    if (groupBy.equals("department")) {
-      count = employeeRepository.countAllByStatusGroupByDepartment(status);
-      percentage = count * 100.0 / statusCount;
-      return new EmployeeDistributionDto("department", count, percentage);
-    } else if (groupBy.equals("position")) {
-      count = employeeRepository.countAllByStatusGroupByPosition(status);
-      percentage = count * 100.0 / statusCount;
-      return new EmployeeDistributionDto("position", count, percentage);
+    List<Object[]> result;
+    if (EmployeeGroupBy.DEPARTMENT.equals(groupBy)) {
+      result = employeeRepository.countAllByStatusGroupByDepartment(status);
+    } else {  // POSITION
+      result = employeeRepository.countAllByStatusGroupByPosition(status);
     }
-    throw new IllegalArgumentException("정해지지 않은 분류 조건입니다: " + groupBy);
+    return toDtoList(result, statusCount);
+  }
+
+  private List<EmployeeDistributionDto> toDtoList(List<Object[]> result, Long statusCount) {
+    List<EmployeeDistributionDto> dtoList = new ArrayList<>();
+    for (Object[] row : result) {
+      String groupKey = (String) row[0];
+      Long count = (Long) row[1];
+      double percentage = count * 100.0 / statusCount;
+      dtoList.add(new EmployeeDistributionDto(groupKey, count, percentage));
+    }
+    return dtoList;
   }
 
 }
