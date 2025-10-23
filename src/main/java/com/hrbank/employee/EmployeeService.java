@@ -5,7 +5,9 @@ import com.hrbank.employee.dto.EmployeeDistributionDto;
 import com.hrbank.employee.dto.EmployeeDto;
 import com.hrbank.employee.dto.EmployeeTrendDto;
 import com.hrbank.employee.dto.EmployeeUpdateRequest;
+import com.hrbank.employee.enums.EmployeeGroupBy;
 import com.hrbank.employee.enums.EmployeeStatus;
+import com.hrbank.employee.enums.PeriodUnit;
 import com.hrbank.employee.mapper.EmployeeMapper;
 import com.hrbank.file.File;
 import com.hrbank.file.FileService;
@@ -164,7 +166,7 @@ public class EmployeeService{
   조건 5. unit 기본값: month
    */
   @Transactional(readOnly = true)
-  public List<EmployeeTrendDto> getEmployeeChangeTrend(LocalDate from, LocalDate to, String unit) {
+  public List<EmployeeTrendDto> getEmployeeChangeTrend(LocalDate from, LocalDate to, PeriodUnit unit) {
     if (from == null) {
       from = LocalDate.now().minusMonths(12);
     }
@@ -172,29 +174,14 @@ public class EmployeeService{
       to = LocalDate.now();
     }
     List<EmployeeTrendDto> dtoList = new ArrayList<>();
-    Period period;
-    switch (unit) {
-      case "day":
-        period = Period.ofDays(1);
-        collectTrendByPeriod(period, from, to, dtoList);
-        break;
-      case "week":
-        period = Period.ofWeeks(1);
-        collectTrendByPeriod(period, from, to, dtoList);
-        break;
-      case "month":
-        period = Period.ofMonths(1);
-        collectTrendByPeriod(period, from, to, dtoList);
-        break;
-      case "quarter":
-        period = Period.ofMonths(3);
-        collectTrendByPeriod(period, from, to, dtoList);
-        break;
-      case "year":
-        period = Period.ofYears(1);
-        collectTrendByPeriod(period, from, to, dtoList);
-        break;
-    }
+    Period period = switch (unit) {
+      case DAY -> Period.ofDays(1);
+      case WEEK -> Period.ofWeeks(1);
+      case MONTH -> Period.ofMonths(1);
+      case QUARTER -> Period.ofMonths(3);
+      case YEAR -> Period.ofYears(1);
+    };
+    collectTrendByPeriod(period, from, to, dtoList);
     return dtoList;
   }
 
@@ -265,12 +252,12 @@ public class EmployeeService{
   조건 3. 세부이름을 기준으로 데이터를 리스트로 반환
    */
   @Transactional(readOnly = true)
-  public List<EmployeeDistributionDto> findDistributedEmployee(String groupBy, EmployeeStatus status) {
+  public List<EmployeeDistributionDto> findDistributedEmployee(EmployeeGroupBy groupBy, EmployeeStatus status) {
     Long statusCount = employeeRepository.countAllByStatus(status);
-    if (groupBy.equals("department")) {
+    if (EmployeeGroupBy.DEPARTMENT.equals(groupBy)) {
       List<Object[]> result = employeeRepository.countAllByStatusGroupByDepartment(status);
       return toDtoList(result, statusCount);
-    } else if (groupBy.equals("position")) {
+    } else if (EmployeeGroupBy.POSITION.equals(groupBy)) {
       List<Object[]> result = employeeRepository.countAllByStatusGroupByPosition(status);
       return toDtoList(result, statusCount);
     }

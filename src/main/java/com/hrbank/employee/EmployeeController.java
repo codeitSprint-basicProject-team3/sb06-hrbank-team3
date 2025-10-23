@@ -2,6 +2,8 @@ package com.hrbank.employee;
 
 import com.hrbank.employee.dto.*;
 
+import com.hrbank.employee.enums.EmployeeGroupBy;
+import com.hrbank.employee.enums.PeriodUnit;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -9,7 +11,6 @@ import com.hrbank.employee.enums.EmployeeStatus;
 import com.hrbank.employee.enums.SortDirection;
 import com.hrbank.employee.enums.SortField;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -97,14 +98,14 @@ public class EmployeeController {
   public ResponseEntity<List<EmployeeTrendDto>> getCountByTrend(
       @RequestParam(required = false) LocalDate from,
       @RequestParam(required = false) LocalDate to,
-      @RequestParam(defaultValue = "month") String unit
+      @RequestParam(defaultValue = "month") PeriodUnit unit
   ) {
     return ResponseEntity.ok(employeeService.getEmployeeChangeTrend(from,to,unit));
   }
 
   @GetMapping("/stats/distribution")
   public ResponseEntity<List<EmployeeDistributionDto>> getEmployeeDistribution(
-      @RequestParam(defaultValue = "department") String groupBy,
+      @RequestParam(defaultValue = "department") EmployeeGroupBy groupBy,
       @RequestParam(defaultValue = "ACTIVE") EmployeeStatus status
   ){
       return ResponseEntity.ok(employeeService.findDistributedEmployee(groupBy, status));
