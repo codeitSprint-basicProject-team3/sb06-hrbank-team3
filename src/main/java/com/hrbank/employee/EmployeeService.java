@@ -244,13 +244,13 @@ public class EmployeeService{
   # 직원 수 조회
   조건 1. 현재 직원 상태
   조건 2. 주어진 기간 내 입사한 직원 수 조회
-  조건 3. fromDate 미지정 시 현재 직원 상태에 따른 전체 직원 수 조회 todo
+  조건 3. fromDate 미지정 시 현재 직원 상태에 따른 전체 직원 수 조회
   조건 4. toDate 기본값 현재 일시
    */
   @Transactional(readOnly = true)
   public Long countEmployeesHiredBetween(EmployeeStatus status, LocalDate fromDate, LocalDate toDate) {
     if (fromDate == null) {
-      return null;
+      return employeeRepository.countAllByStatus(status);
     }
     if (toDate == null) {
       toDate = LocalDate.now();
