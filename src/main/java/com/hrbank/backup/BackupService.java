@@ -1,7 +1,7 @@
 package com.hrbank.backup;
 
+import com.hrbank.BackupSortType;
 import com.hrbank.backup.util.BackupFileNameUtils;
-import com.hrbank.SortField;
 import com.hrbank.exception.NotFoundException;
 import com.hrbank.backup.dto.BackupDto;
 import com.hrbank.backup.dto.BackupFindRequestDto;
@@ -10,6 +10,7 @@ import com.hrbank.backup.util.CsvBackupWriter;
 import com.hrbank.repository.BackupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.SortDirection;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,11 +92,13 @@ public class BackupService {
 
         // 기본값 처리
         int size = dto.size() != null ? dto.size() : 10;
-        SortField sortField = dto.sortField() != null ? dto.sortField() : SortField.STARTED_AT;
-        SortDirection sortDirection = dto.sortDirection() != null ? dto.sortDirection() : SortDirection.DESC;
+        BackupSortType backupSortType
+                = dto.backupSortType() != null ? dto.backupSortType() : BackupSortType.STARTED_AT_DESC;
 
-        boolean ascending = (sortDirection == SortDirection.ASC);
-        boolean useEndedAt = (sortField == SortField.ENDED_AT);
+        boolean ascending = (backupSortType.equals(BackupSortType.STARTED_AT_ASC)
+                || backupSortType.equals(BackupSortType.ENDED_AT_ASC));
+        boolean useEndedAt = (backupSortType.equals(BackupSortType.ENDED_AT_ASC)
+                || backupSortType.equals(BackupSortType.ENDED_AT_DESC));
 
         // 커서 페이징 설정
         Pageable pageable = PageRequest.of(0, size, Sort.by("id").descending());

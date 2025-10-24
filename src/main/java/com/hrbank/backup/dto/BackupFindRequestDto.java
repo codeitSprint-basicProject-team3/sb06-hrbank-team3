@@ -1,8 +1,10 @@
 package com.hrbank.backup.dto;
 
+import com.hrbank.BackupSortType;
 import com.hrbank.backup.Backup;
 import com.hrbank.SortField;
 import lombok.Builder;
+import org.hibernate.query.SortDirection;
 import org.springdoc.core.annotations.ParameterObject;
 
 import java.time.LocalDateTime;
@@ -17,7 +19,6 @@ public record BackupFindRequestDto(
         Long idAfter,
         String cursor,
         Integer size,
-        SortField sortField,
-        SortDirection sortDirection
+        BackupSortType backupSortType
 ) {
 }

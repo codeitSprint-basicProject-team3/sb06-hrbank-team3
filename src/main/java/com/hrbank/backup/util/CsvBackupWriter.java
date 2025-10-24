@@ -23,6 +23,7 @@ public class CsvBackupWriter {
         Files.createDirectories(backupDir); // 경로가 이미 있으면 넘어가고, 없으면 새로 만듬.
         Path backupFile = backupDir.resolve(fileName); // 저장 전체 경로
 
+        // CSV 파일 생성
         try (BufferedWriter writer = Files.newBufferedWriter(backupFile, StandardCharsets.UTF_8)) {
             writer.write("id,employee_number,name,email,department,title,joined_date,status");
             writer.newLine();
