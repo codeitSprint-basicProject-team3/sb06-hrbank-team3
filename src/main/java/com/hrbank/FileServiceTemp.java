@@ -19,7 +19,7 @@ public class FileServiceTemp {
     public File createMetadata(Path backupfile) throws IOException {
         return File.builder()
                 .name(backupFile.getFileName().toString().replaceFirst("\\.csv$", ""))
-                .extension("csv")
+                .contentType("csv")
                 .size(Files.size(backupFile))
                 .build();
     }
