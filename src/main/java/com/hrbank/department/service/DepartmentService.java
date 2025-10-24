@@ -5,7 +5,7 @@ import com.hrbank.department.dto.request.CreateDepartmentRequest;
 import com.hrbank.department.dto.request.UpdateDepartmentRequest;
 import com.hrbank.department.dto.response.DepartmentResponse;
 import com.hrbank.department.entity.Department;
-import com.hrbank.department.exception.ResourceNotFoundException;
+import com.hrbank.department.exception.NotFoundException;
 import com.hrbank.department.mapper.DepartmentMapper;
 import com.hrbank.department.repository.DepartmentRepository;
 import com.hrbank.department.repository.specification.DepartmentSpecification;
@@ -60,7 +60,7 @@ public class DepartmentService {
   public void deleteDepartment(Long id) {
     // 부서 없음
     if (!departmentRepository.existsById(id)) {
-      throw new ResourceNotFoundException("존재하지 않는 부서입니다. ID: " + id);
+      throw new NotFoundException("존재하지 않는 부서입니다. ID: " + id);
     }
     // 소속 직원이 있음
     if (employeeRepository.existsByDepartment_Id(id)) {
@@ -126,6 +126,6 @@ public class DepartmentService {
    */
   private Department findDepartmentById(Long id) {
     return departmentRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 부서입니다. ID: " + id));
+        .orElseThrow(() -> new NotFoundException("존재하지 않는 부서입니다. ID: " + id));
   }
 }
