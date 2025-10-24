@@ -30,7 +30,8 @@ public class DepartmentService {
 
   @Transactional
   public DepartmentResponse createDepartment(CreateDepartmentRequest dto) {
-    // 400 오류: 이름 중복
+
+    // 중복된 이름이 존재
     if (departmentRepository.existsByName(dto.name())) {
       throw new IllegalArgumentException("이미 존재하는 부서 이름입니다.");
     }
@@ -41,10 +42,9 @@ public class DepartmentService {
 
   @Transactional
   public DepartmentResponse updateDepartment(Long id, UpdateDepartmentRequest dto) {
-    // 404 오류: 부서 없음
     Department department = findDepartmentById(id);
 
-    // 400 오류: 수정하려는 이름이 다른 부서의 이름과 중복
+    // 수정하려는 이름이 다른 부서의 이름과 중복
     departmentRepository.findByName(dto.name()).ifPresent(d -> {
       if (!d.getId().equals(id)) {
         throw new IllegalArgumentException("이미 존재하는 부서 이름입니다.");
@@ -58,11 +58,11 @@ public class DepartmentService {
 
   @Transactional
   public void deleteDepartment(Long id) {
-    // 404 오류: 부서 없음
+    // 부서 없음
     if (!departmentRepository.existsById(id)) {
       throw new ResourceNotFoundException("존재하지 않는 부서입니다. ID: " + id);
     }
-    // 400 오류: 소속 직원이 있음
+    // 소속 직원이 있음
     if (employeeRepository.existsByDepartment_Id(id)) {
       throw new IllegalStateException("소속된 직원이 있는 부서는 삭제할 수 없습니다.");
     }
@@ -71,7 +71,7 @@ public class DepartmentService {
 
   @Transactional(readOnly = true)
   public DepartmentResponse getDepartmentById(Long id) {
-    // 404 오류: 부서 없음
+    // 부서 없음
     Department department = findDepartmentById(id);
     long employeeCount = employeeRepository.countByDepartment_Id(id);
     return departmentMapper.toResponseDto(department, employeeCount);
