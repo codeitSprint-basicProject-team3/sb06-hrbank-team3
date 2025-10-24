@@ -22,14 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class DepartmentService {
 
   private final DepartmentRepository departmentRepository;
   private final EmployeeRepository employeeRepository;
   private final DepartmentMapper departmentMapper;
 
-  /** 부서 생성 (POST) */
   @Transactional
   public DepartmentResponse createDepartment(CreateDepartmentRequest dto) {
     // 400 오류: 이름 중복
@@ -41,7 +39,6 @@ public class DepartmentService {
     return departmentMapper.toResponseDto(department, 0L);
   }
 
-  /** 부서 수정 (PATCH) */
   @Transactional
   public DepartmentResponse updateDepartment(Long id, UpdateDepartmentRequest dto) {
     // 404 오류: 부서 없음
@@ -55,11 +52,10 @@ public class DepartmentService {
     });
     departmentMapper.updateFromDto(dto, department);
 
-    long employeeCount = employeeRepository.countByDepartmentId(id);
+    long employeeCount = employeeRepository.countByDepartment_Id(id);
     return departmentMapper.toResponseDto(department, employeeCount);
   }
 
-  /** 부서 삭제 (DELETE) */
   @Transactional
   public void deleteDepartment(Long id) {
     // 404 오류: 부서 없음
@@ -67,21 +63,21 @@ public class DepartmentService {
       throw new ResourceNotFoundException("존재하지 않는 부서입니다. ID: " + id);
     }
     // 400 오류: 소속 직원이 있음
-    if (employeeRepository.existsByDepartmentId(id)) {
+    if (employeeRepository.existsByDepartment_Id(id)) {
       throw new IllegalStateException("소속된 직원이 있는 부서는 삭제할 수 없습니다.");
     }
     departmentRepository.deleteById(id);
   }
 
-  /** 부서 상세 조회 (GET /id) */
+  @Transactional(readOnly = true)
   public DepartmentResponse getDepartmentById(Long id) {
     // 404 오류: 부서 없음
     Department department = findDepartmentById(id);
-    long employeeCount = employeeRepository.countByDepartmentId(id);
+    long employeeCount = employeeRepository.countByDepartment_Id(id);
     return departmentMapper.toResponseDto(department, employeeCount);
   }
 
-  /** 부서 목록 조회 (GET) */
+  @Transactional(readOnly = true)
   public SliceResponse<DepartmentResponse> searchDepartments(
       String nameOrDescription, Long idAfter, int size, String sortField, String sortDirection) {
 
