@@ -6,6 +6,7 @@ import com.hrbank.department.dto.request.UpdateDepartmentRequest;
 import com.hrbank.department.entity.Department;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -19,9 +20,15 @@ public interface DepartmentMapper {
   Department toEntity(CreateDepartmentRequest request);
 
   /**
-   Entity -> DTO 변환
+   Entity -> DTO 변환 (employeeCount가 없는 경우)
    */
   DepartmentResponse toResponseDto(Department department);
+
+  /**
+   * Entity + employeeCount -> DTO 변환
+   */
+  @Mapping(target = "employeeCount", source = "employeeCount")
+  DepartmentResponse toResponseDto(Department department, Long employeeCount);
 
   /**
    DTO의 내용으로 Entity 업데이트

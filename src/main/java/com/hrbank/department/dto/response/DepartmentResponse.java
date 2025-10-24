@@ -14,7 +14,10 @@ public record DepartmentResponse(
     String description,
 
     @Schema(description = "설립일", example = "2023-01-15")
-    LocalDate establishedAt
+    LocalDate establishedDate,
+
+    @Schema(description = "소속 직원 수", example = "5")
+    Long employeeCount
 ) {
 
 }
