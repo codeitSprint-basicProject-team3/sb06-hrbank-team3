@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import java.time.Instant;
 import java.time.LocalDate;
 
+import java.util.ArrayList;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -60,6 +61,16 @@ public class Employee {
   @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "profile_image_id")
   private File file;
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "employee", cascade = CascadeType.ALL)
+  private List<EmployeeHistory> employeeHistory = new ArrayList<>();
+
+  public void addEmployeeHistory(EmployeeHistory history) {
+    employeeHistories.add(history);
+    if (history.getEmployee() != this) {
+      history.setEmployee(this);
+    }
+  }
 
   public void update(String newName, String newEmail, Department newDepartment, String newPosition,
                      LocalDate newHireDate, EmployeeStatus newStatus) {
