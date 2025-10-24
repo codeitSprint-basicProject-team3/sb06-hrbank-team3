@@ -37,7 +37,7 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-    //feign 으로 바꾸기 의존성...
+
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
@@ -46,4 +46,20 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// QueryDSL 세팅
+sourceSets {
+    main {
+        java {
+            srcDirs += files("build/generated/sources/annotationProcessor/java/main")
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += [
+            "-Aquerydsl.entityAccessors=true",
+            "-Aquerydsl.useFields=true"
+    ]
 }

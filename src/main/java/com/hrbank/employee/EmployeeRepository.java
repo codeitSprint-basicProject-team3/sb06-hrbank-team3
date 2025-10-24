@@ -1,8 +1,9 @@
 package com.hrbank.employee;
 
-import java.time.LocalDate;
-
 import com.hrbank.employee.enums.EmployeeStatus;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -10,16 +11,18 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>, Employ
 
   Boolean existsByEmail(String email);
 
-//  @Query("SELECT COUNT(e) FROM Employee e WHERE e.hireDate < :date and e.status = "ACTIVE")
-//  List<Long> countAllByHireDateAndDate(LocalDate date, String unit);
+  Long countAllByStatusNotAndHireDateLessThanEqual(EmployeeStatus resignedStatus,  LocalDate current);
+
+  @Query("SELECT COUNT(e) FROM Employee e WHERE e.status = :resignedStatus AND :currentInstant BETWEEN e.createdAt and e.updatedAt")
+  Long countAllByStatusAtInstant(EmployeeStatus resignedStatus, Instant currentInstant);
 
   Long countAllByStatusAndHireDateBetween(EmployeeStatus status, LocalDate fromDate, LocalDate toDate);
 
   @Query(value = "SELECT COUNT(e) FROM Employee e WHERE e.status = :status GROUP BY e.department")
-  Long countAllByStatusGroupByDepartment(EmployeeStatus status);
+  List<Object[]> countAllByStatusGroupByDepartment(EmployeeStatus status);
 
   @Query(value = "SELECT COUNT(e) FROM Employee e WHERE e.status = :status GROUP BY e.position")
-  Long countAllByStatusGroupByPosition(EmployeeStatus status);
+  List<Object[]> countAllByStatusGroupByPosition(EmployeeStatus status);
 
   Long countAllByStatus(EmployeeStatus status);
 }

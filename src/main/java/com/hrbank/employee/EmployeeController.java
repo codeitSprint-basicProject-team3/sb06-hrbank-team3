@@ -2,6 +2,8 @@ package com.hrbank.employee;
 
 import com.hrbank.employee.dto.*;
 
+import com.hrbank.employee.enums.EmployeeGroupBy;
+import com.hrbank.employee.enums.PeriodUnit;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -9,7 +11,6 @@ import com.hrbank.employee.enums.EmployeeStatus;
 import com.hrbank.employee.enums.SortDirection;
 import com.hrbank.employee.enums.SortField;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -104,17 +105,16 @@ public class EmployeeController {
 
   @GetMapping("/stats/trend")
   public ResponseEntity<List<EmployeeTrendDto>> getCountByTrend(
-      @RequestParam LocalDate from,
-      @RequestParam LocalDate to,
-      @RequestParam(defaultValue = "month") String unit
+      @RequestParam(required = false) LocalDate from,
+      @RequestParam(required = false) LocalDate to,
+      @RequestParam(defaultValue = "month") PeriodUnit unit
   ) {
-    List<EmployeeTrendDto> numberList = employeeService.countEmployeeByUnit(from,to,unit);
-    return null;
+    return ResponseEntity.ok(employeeService.getEmployeeChangeTrend(from,to,unit));
   }
 
   @GetMapping("/stats/distribution")
-  public ResponseEntity<EmployeeDistributionDto> getEmployeeDistribution(
-      @RequestParam String groupBy,
+  public ResponseEntity<List<EmployeeDistributionDto>> getEmployeeDistribution(
+      @RequestParam(defaultValue = "department") EmployeeGroupBy groupBy,
       @RequestParam(defaultValue = "ACTIVE") EmployeeStatus status
   ){
       return ResponseEntity.ok(employeeService.findDistributedEmployee(groupBy, status));
@@ -123,8 +123,8 @@ public class EmployeeController {
   @GetMapping("/count")
   public ResponseEntity<Long> getCountByDateRange(
       @RequestParam EmployeeStatus status,
-      @RequestParam LocalDate fromDate,
-      @RequestParam LocalDate toDate
+      @RequestParam(required = false) LocalDate fromDate,
+      @RequestParam(required = false) LocalDate toDate
   ){
     return ResponseEntity.ok(employeeService.countEmployeesHiredBetween(status, fromDate, toDate));
   }

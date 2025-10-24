@@ -29,4 +29,9 @@ public class FileService {
     }
     return saved;
   }
+
+  public void deleteFile(File file){
+    storage.delete(file);
+    fileRepository.delete(file);
+  }
 }
