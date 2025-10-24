@@ -1,4 +1,4 @@
-package com.hrbank.sort;
+package com.hrbank;
 
 public enum SortField {
     STARTED_AT,
