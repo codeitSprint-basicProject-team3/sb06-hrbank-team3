@@ -1,13 +1,8 @@
-package com.hrbank.repository;
+package com.hrbank.backup.repository;
 
 import com.hrbank.backup.Backup;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface BackupRepository extends JpaRepository<Backup, Long>, BackupRepositoryCustom {

@@ -1,6 +1,12 @@
 package com.hrbank.file;
 
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class FileService {
 
   private final FileRepository fileRepository;
@@ -28,6 +35,22 @@ public class FileService {
       throw new RuntimeException("파일 저장 중 에러");
     }
     return saved;
+  }
+
+  public File createMetadata(Path backupFile) throws IOException {
+    return File.builder()
+        .name(backupFile.getFileName().toString().replaceFirst("\\.csv$", ""))
+        .contentType("csv")
+        .size(Files.size(backupFile))
+        .build();
+  }
+
+  public void deleteIfExists(Path backupFile){
+    try {
+      Files.deleteIfExists(backupFile);
+    } catch (IOException e) {
+      log.error("파일 삭제 실패: {}", backupFile, e);
+    }
   }
 
   public void deleteFile(File file){
