@@ -36,7 +36,7 @@ public class Department {
   @Column(name = "description", nullable = false, length = 255)
   private String description;
 
-  @Column(name = "established_Date", nullable = false)
+  @Column(name = "established_date", nullable = false)
   private LocalDate establishedDate;
 
   @OneToMany(mappedBy = "department")
