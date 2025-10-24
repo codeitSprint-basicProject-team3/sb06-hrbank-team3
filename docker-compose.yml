@@ -1,0 +1,19 @@
+version: '3'
+services:
+  postgres-db:
+    image: postgres:17
+    container_name: team03-hrbank
+    environment:
+      POSTGRES_USER: team03
+      POSTGRES_PASSWORD: 3333
+      POSTGRES_DB: discodeit
+      TZ: Asia/Seoul
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+
