@@ -1,8 +1,7 @@
 package com.hrbank.backup.dto;
 
 import com.hrbank.backup.Backup;
-import com.hrbank.sort.SortDirection;
-import com.hrbank.sort.SortField;
+import com.hrbank.SortField;
 import lombok.Builder;
 import org.springdoc.core.annotations.ParameterObject;
 

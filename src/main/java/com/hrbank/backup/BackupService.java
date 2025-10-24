@@ -1,8 +1,7 @@
 package com.hrbank.backup;
 
 import com.hrbank.backup.util.BackupFileNameUtils;
-import com.hrbank.sort.SortDirection;
-import com.hrbank.sort.SortField;
+import com.hrbank.SortField;
 import com.hrbank.exception.NotFoundException;
 import com.hrbank.backup.dto.BackupDto;
 import com.hrbank.backup.dto.BackupFindRequestDto;
@@ -15,8 +14,6 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
