@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
   /**
-   * 404 - 리소스를 찾을 수 없음 (GET /api/v1/departments/{id})
+   * 404 - 리소스를 찾을 수 없음 (GET /api/departments/{id})
    */
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
