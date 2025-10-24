@@ -12,6 +12,18 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    open-in-view: false
+
+logging:
+  level:
+    org:
+      hibernate:
+        sql: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
 
   servlet:
     multipart:
@@ -34,3 +46,6 @@ logging:
   level:
     root: INFO             # 전체 로그 레벨
     com.hrbank: DEBUG    # 우리 패키지 로그만 더 자세히
+hrbank:
+  storage:
+    root-path: /file-data
