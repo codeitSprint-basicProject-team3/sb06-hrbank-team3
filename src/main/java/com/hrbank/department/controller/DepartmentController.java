@@ -24,27 +24,27 @@ public class DepartmentController {
 
   @Operation(summary = "부서 등록", description = "새로운 부서를 등록합니다.")
   @PostMapping
-  public ResponseEntity<DepartmentResponse> createDepartment(@Valid @RequestBody CreateDepartmentRequest request) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(departmentService.createDepartment(request));
+  public ResponseEntity<DepartmentResponse> createDepartment(@Valid @RequestBody CreateDepartmentRequest createRequestDto) {
+    DepartmentResponse responseDto = departmentService.createDepartment(createRequestDto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
   }
 
   @Operation(summary = "부서 상세 조회", description = "ID로 특정 부서의 상세 정보를 조회합니다.")
   @GetMapping("/{id}")
-  public ResponseEntity<DepartmentResponse> getDepartmentById(@Parameter(description = "부서 ID") @PathVariable Long id) {
+  public ResponseEntity<DepartmentResponse> getDepartmentById(@PathVariable Long id) {
     return ResponseEntity.ok(departmentService.getDepartmentById(id));
   }
 
   @Operation(summary = "부서 수정", description = "ID로 특정 부서를 수정합니다.")
   @PatchMapping("/{id}")
-  public ResponseEntity<DepartmentResponse> updateDepartment(
-      @Parameter(description = "부서 ID") @PathVariable Long id,
-      @Valid @RequestBody UpdateDepartmentRequest request) {
-    return ResponseEntity.ok(departmentService.updateDepartment(id, request));
+  public ResponseEntity<DepartmentResponse> updateDepartment(@PathVariable Long id, @Valid @RequestBody UpdateDepartmentRequest updateRequestDto) {
+    DepartmentResponse responseDto = departmentService.updateDepartment(id, updateRequestDto);
+    return ResponseEntity.ok(responseDto);
   }
 
   @Operation(summary = "부서 삭제", description = "ID로 특정 부서를 삭제합니다.")
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteDepartment(@Parameter(description = "부서 ID") @PathVariable Long id) {
+  public ResponseEntity<Void> deleteDepartment(@PathVariable Long id) {
     departmentService.deleteDepartment(id);
     return ResponseEntity.noContent().build();
   }
