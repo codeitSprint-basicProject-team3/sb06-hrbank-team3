@@ -1,5 +1,6 @@
-package com.hrbank.backup;
+package com.hrbank.repository;
 
+import com.hrbank.backup.Backup;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,11 +10,12 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-public interface BackupRepository extends JpaRepository<Backup, Long> {
+public interface BackupRepository extends JpaRepository<Backup, Long>, BackupRepositoryCustom {
 
-    // TODO QueryDSL로 메서드 간추리기
+    Optional<Backup> findFirstByStatusOrderByEndedAtDesc(Backup.BackupStatus status);
+
     // TODO 커서 기준 개선 필요 idAfter만 쓰면 동일 시간인 데이터는 하나만 가져오게됨.
-
+    /*
     // 기본값
     @Query("""
         SELECT b FROM Backup b
@@ -82,7 +84,5 @@ public interface BackupRepository extends JpaRepository<Backup, Long> {
             @Param("worker") String worker,
             @Param("status") Backup.BackupStatus status,
             Pageable pageable);
-
-    Optional<Backup> findFirstByStatusOrderByEndedAtDesc(Backup.BackupStatus status);
-
+    */
 }

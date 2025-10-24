@@ -1,10 +1,13 @@
 package com.hrbank.backup;
 
+import com.hrbank.sort.SortDirection;
+import com.hrbank.sort.SortField;
 import com.hrbank.exception.NotFoundException;
 import com.hrbank.backup.dto.BackupDto;
 import com.hrbank.backup.dto.BackupFindRequestDto;
 import com.hrbank.backup.dto.CursorPageResponseBackupDto;
 import com.hrbank.backup.util.CsvBackupWriter;
+import com.hrbank.repository.BackupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -60,24 +63,14 @@ public class BackupService {
         try {
             // 로컬에 파일 저장
             Path backupFile = csvBackupWriter.writeEmployeeBackup(backup.getId());
-
             // DB에 메타데이터 저장
-            File newFile = File.builder()
-                    .name(backupFile.getFileName().toString().replaceFirst("\\.csv$", ""))
-                    .extension("csv")
-                    .size(Files.size(backupFile))
-                    .build();
+            File fileMeta = fileService.createFileMetadata(backupFile);
             backup.setFile(newFile);
-
             backup.setEndedAt(LocalDateTime.now());
             backup.setStatus(Backup.BackupStatus.COMPLETED);
         } catch (Exception e) {
             log.error("백업 실패", e);
-            try {
-                Files.deleteIfExists(backupFile);
-            } catch (IOException ioException) {
-                log.error("백업 파일 삭제 실패", ioException);
-            }
+            fileService.deleteIfExists(backupFile);
             backup.setStatus(Backup.BackupStatus.FAILED);
         } finally {
             backup.setEndedAt(LocalDateTime.now());
@@ -94,50 +87,22 @@ public class BackupService {
         SortField sortField = dto.sortField() != null ? dto.sortField() : SortField.STARTED_AT;
         SortDirection sortDirection = dto.sortDirection() != null ? dto.sortDirection() : SortDirection.DESC;
 
+        boolean ascending = (sortDirection == SortDirection.ASC);
+        boolean useEndedAt = (sortField == SortField.ENDED_AT);
+
         // 커서 페이징 설정
         Pageable pageable = PageRequest.of(0, size, Sort.by("id").descending());
-        Slice<Backup> slice;
 
         // 필터링 조건과 JPA메서드 연결
-        if (sortField == SortField.STARTED_AT) {
-            if (sortDirection == SortDirection.DESC) {
-                if (dto.idAfter() == null) {
-                    // 첫 페이지
-                    slice = backupRepository.findAllByStartedAtDesc(
-                            Long.MAX_VALUE, dto.startedAtFrom(), dto.startedAtTo(), dto.worker(), dto.status(), pageable);
-                } else {
-                    slice = backupRepository.findAllByStartedAtDesc(
-                            dto.idAfter(), dto.startedAtFrom(), dto.startedAtTo(), dto.worker(), dto.status(), pageable);
-                }
-            }
-            else { // sortDirection == SortDirection.ASC
-                if (dto.idAfter() == null) {
-                    slice = backupRepository.findAllByStartedAtAsc(
-                            0L, dto.startedAtFrom(), dto.startedAtTo(), dto.worker(), dto.status(), pageable);
-                } else {
-                    slice = backupRepository.findAllByStartedAtAsc(
-                            dto.idAfter(), dto.startedAtFrom(), dto.startedAtTo(), dto.worker(), dto.status(), pageable);
-                }
-            }
-        } else { // sortField == SortField.ENDED_AT
-            if (sortDirection == SortDirection.DESC) {
-                if (dto.idAfter() == null) {
-                    slice = backupRepository.findAllByEndedAtDesc(
-                            Long.MAX_VALUE, dto.startedAtFrom(), dto.startedAtTo(), dto.worker(), dto.status(), pageable);
-                } else {
-                    slice = backupRepository.findAllByEndedAtDesc(
-                            dto.idAfter(), dto.startedAtFrom(), dto.startedAtTo(), dto.worker(), dto.status(), pageable);
-                }
-            } else { // sortDirection == SortDirection.ASC
-                if (dto.idAfter() == null) {
-                    slice = backupRepository.findAllByEndedAtAsc(
-                            0L, dto.startedAtFrom(), dto.startedAtTo(), dto.worker(), dto.status(), pageable);
-                } else {
-                    slice = backupRepository.findAllByEndedAtAsc(
-                            dto.idAfter(), dto.startedAtFrom(), dto.startedAtTo(), dto.worker(), dto.status(), pageable);
-                }
-            }
-        }
+        Slice<Backup> slice = backupRepository.search(
+                dto.idAfter(),
+                dto.startedAtFrom(),
+                dto.startedAtTo(),
+                dto.worker(),
+                dto.status(),
+                ascending,
+                useEndedAt,
+                pageable);
 
         // DTO로 변환
         List<BackupDto> content = slice.getContent().stream()

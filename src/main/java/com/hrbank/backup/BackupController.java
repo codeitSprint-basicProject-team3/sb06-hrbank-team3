@@ -27,7 +27,7 @@ public class BackupController {
     }
 
     @GetMapping
-    public ResponseEntity<CursorPageResponseBackupDto<BackupDto>> findAll(@ModelAttribute BackupFindRequestDto dto) {
+    public ResponseEntity<CursorPageResponseBackupDto<BackupDto>> findAll(BackupFindRequestDto dto) {
         return ResponseEntity.ok(backupService.findAll(dto));
     }
 

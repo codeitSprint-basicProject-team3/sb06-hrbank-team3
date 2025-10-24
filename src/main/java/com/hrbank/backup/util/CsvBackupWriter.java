@@ -16,15 +16,15 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 public class CsvBackupWriter {
 
-    private final EmployeeRepository employeeRepository;
+    // private final EmployeeRepository employeeRepository;
 
-    public Path writeEmployeeBackup(Long backupId) throws IOException {
+    public Path writeEmployeeBackup(Path backupDir, String fileName) throws IOException {
 
-        Path backupDir = Paths.get("com/hrbank/backup/files"); // 저장 상대경로
-        Files.createDirectories(backupDir);
+//        Path backupDir = Paths.get("com/hrbank/backup/files"); // 저장 상대경로
+        Files.createDirectories(backupDir); // 경로가 이미 있으면 넘어가고, 없으면 새로 만듬.
 
-        String fileName = "employee_backup_" + backupId + LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".csv";
+//        String fileName = "employee_backup_" + backupId + LocalDateTime.now()
+//                .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".csv";
         Path backupFile = backupDir.resolve(fileName); // 저장 전체경로
 
         try (BufferedWriter writer = Files.newBufferedWriter(backupFile, StandardCharsets.UTF_8)) {
