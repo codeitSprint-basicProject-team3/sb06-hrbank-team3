@@ -78,8 +78,7 @@ public class EmployeeService{
             .file(savedProfileImage)
             .build();
 
-        // todo createHistory 메서드에서 인자로 뭘 필요로 하는지 협의
-        newEmployee.addEmployeeHistory(historyService.createHistory(newEmployee, createRequest.memo()));
+        newEmployee.addEmployeeHistory(historyService.createCreateHistory(newEmployee, createRequest.memo()));
 
         employeeRepository.save(newEmployee);
 
