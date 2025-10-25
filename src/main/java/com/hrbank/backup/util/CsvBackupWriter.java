@@ -1,5 +1,7 @@
 package com.hrbank.backup.util;
 
+import com.hrbank.employee.Employee;
+import com.hrbank.employee.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 public class CsvBackupWriter {
 
-    // private final EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
 
     public Path writeEmployeeBackup(Path backupDir, String fileName) throws IOException {
 

@@ -9,6 +9,7 @@ import com.hrbank.department.exception.NotFoundException;
 import com.hrbank.department.mapper.DepartmentMapper;
 import com.hrbank.department.repository.DepartmentRepository;
 import com.hrbank.department.repository.specification.DepartmentSpecification;
+import com.hrbank.employee.EmployeeRepository;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

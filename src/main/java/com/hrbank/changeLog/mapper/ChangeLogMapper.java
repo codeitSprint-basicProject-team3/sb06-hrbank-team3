@@ -12,12 +12,10 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ChangeLogMapper {
     @Mapping(source = "employee.employeeNumber", target = "employeeNumber")
-    @Mapping(source = "createdAt", target = "createdAt")
     ChangeLogDto toChangeLogDto(ChangeLog entity);
 
     List<ChangeLogDto> toChangeLogDtos(List<ChangeLog> entities);
 
-    @Mapping(source = "employee.employeeNumber", target = "employeeNumber")
-    @Mapping(source = "createdAt", target = "createdAt")
+    @Mapping(source = "entity.employee.employeeNumber", target = "employeeNumber")
     ChangeLogDetailResponse toChangeLogDetailResponse(ChangeLog entity, List<DiffDto> diffs);
 }
