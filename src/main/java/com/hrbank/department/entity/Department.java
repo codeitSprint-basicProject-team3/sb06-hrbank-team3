@@ -42,4 +42,30 @@ public class Department {
   @OneToMany(mappedBy = "department")
   private List<Employee> employees = new ArrayList<>();
 
+  // === 연관관계 편의 메서드  === //
+  public void addEmployee(Employee employee) {
+    if (employee != null && !this.employees.contains(employee)) {
+      this.employees.add(employee);
+      employee.setDepartment(this); // 자식 엔티티에도 관계 설정
+    }
+  }
+
+  // === 연관관계 편의 메서드 (employee) === //
+  /**
+   * public void setDepartment(Department department) {
+   *         // 1. 기존 부서가 있다면, 기존 부서의 직원 목록에서 나를 제거
+   *         if (this.department != null) {
+   *             this.department.getEmployees().remove(this);
+   *         }
+   *
+   *         // 2. 새로운 부서로 설정
+   *         this.department = department;
+   *
+   *         // 3. 새로운 부서가 null이 아니고, 부서의 직원 목록에 내가 없다면 나를 추가
+   *         if (department != null && !department.getEmployees().contains(this)) {
+   *             department.getEmployees().add(this); // 부모 엔티티에도 관계 설정
+   *         }
+   *     }
+   */
+
 }
