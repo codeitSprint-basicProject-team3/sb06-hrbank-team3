@@ -1,0 +1,43 @@
+package com.hrbank.changeLog.repository;
+
+import com.hrbank.changeLog.entity.ChangeType;
+import com.hrbank.changeLog.entity.ChangeLog;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+
+@Repository
+public interface ChangeLogRepository extends JpaRepository<ChangeLog, Long> {
+    List<ChangeLog> findByEmployeeId(UUID employeeId);
+    //List<EmployeeHistory> findByEmployeeIdAndType(UUID employeeId, ChangeType type);
+
+    @Query("""
+        SELECT c FROM ChangeLog c
+        WHERE (:employeeNumber IS NULL OR c.employee.employeeNumber LIKE %:employeeNumber%)
+          AND (:memo IS NULL OR c.memo LIKE %:memo%)
+          AND (:ipAddress IS NULL OR c.ipAddress LIKE %:ipAddress%)
+          AND (:type IS NULL OR c.type = :type)
+          AND (:from IS NULL OR c.at >= :from)
+          AND (:to IS NULL OR c.at <= :to)
+        ORDER BY 
+          CASE WHEN :sortField = 'ipAddress' AND :sortDirection = 'asc' THEN c.ipAddress END ASC,
+          CASE WHEN :sortField = 'ipAddress' AND :sortDirection = 'desc' THEN c.ipAddress END DESC,
+          CASE WHEN :sortField = 'at' AND :sortDirection = 'asc' THEN c.at END ASC,
+          CASE WHEN :sortField = 'at' AND :sortDirection = 'desc' THEN c.at END DESC
+    """)
+    List<ChangeLog> searchChangeLogs(
+            @Param("employeeNumber") String employeeNumber,
+            @Param("memo") String memo,
+            @Param("ipAddress") String ipAddress,
+            @Param("type") ChangeType type,
+            @Param("from") Instant from,
+            @Param("to") Instant to,
+            @Param("sortField") String sortField,
+            @Param("sortDirection") String sortDirection
+    );
+}
