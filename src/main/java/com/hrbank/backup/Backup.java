@@ -14,7 +14,7 @@ public class Backup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // DB의 BIGINT UNSIGNED와 매핑 가능.
 
     private String worker; // 작업자의 IP주소
 
@@ -28,7 +28,7 @@ public class Backup {
     private BackupStatus status;
 
     // @OneToOne
-    // @JoinColumn(name = "backup_file_id", nullable = false)
+    // @JoinColumn(name = "backup_file_id") // NULL 허용 (FAILED, SKIPPED)
     // private File file;
 
     public enum BackupStatus {
