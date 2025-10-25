@@ -82,11 +82,11 @@ public class EmployeeService{
             .file(savedProfileImage)
             .build();
 
+    employeeRepository.save(newEmployee);
+
     historyService.createCreateChangeLog(newEmployee, createRequest.memo());
 
-        employeeRepository.save(newEmployee);
-
-        return employeeMapper.toEmployeeDto(newEmployee);
+    return employeeMapper.toEmployeeDto(newEmployee);
   }
 
   // 직원 상세 조회
