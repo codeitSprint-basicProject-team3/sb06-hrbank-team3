@@ -63,7 +63,7 @@ public class Employee {
   private File file;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "employee", cascade = CascadeType.ALL)
-  private List<EmployeeHistory> employeeHistory = new ArrayList<>();
+  private List<EmployeeHistory> employeeHistories = new ArrayList<>();
 
   public void addEmployeeHistory(EmployeeHistory history) {
     employeeHistories.add(history);

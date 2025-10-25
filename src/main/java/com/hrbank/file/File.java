@@ -28,7 +28,7 @@ public class File {
   @Column(nullable = false)
   private String name;
   @Column(nullable = false)
-  private String contentType;
+  private String extension;
   @Column(nullable = false)
   private long size;
 }

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface EmployeeRepository extends JpaRepository<Employee,Long> {
 
@@ -28,4 +29,14 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
   List<Object[]> countAllByStatusGroupByPosition(EmployeeStatus status);
 
   Long countAllByStatus(EmployeeStatus status);
+
+  Boolean existsByDepartment_Id(Long departmentId);
+
+  Long countByDepartment_Id(Long departmentId);
+
+  @Query("SELECT e.department.id, COUNT(e.id) " +
+      "FROM Employee e " +
+      "WHERE e.department.id IN :departmentIds " +
+      "GROUP BY e.department.id")
+  List<Object[]> findEmployeeCountsByDepartmentIds(@Param("departmentIds") List<Long> departmentIds);
 }
