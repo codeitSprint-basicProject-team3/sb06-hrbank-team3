@@ -1,4 +1,4 @@
-package com.hrbank.repository;
+package com.hrbank.backup.repository;
 
 import com.hrbank.backup.Backup;
 import com.hrbank.backup.QBackup;

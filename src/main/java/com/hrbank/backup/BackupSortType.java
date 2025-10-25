@@ -1,4 +1,4 @@
-package com.hrbank;
+package com.hrbank.backup;
 
 public enum BackupSortType {
     STARTED_AT_DESC, // 기본값

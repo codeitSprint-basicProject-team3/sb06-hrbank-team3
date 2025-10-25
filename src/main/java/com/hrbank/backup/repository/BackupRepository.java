@@ -1,20 +1,15 @@
-package com.hrbank.repository;
+package com.hrbank.backup.repository;
 
 import com.hrbank.backup.Backup;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface BackupRepository extends JpaRepository<Backup, Long>, BackupRepositoryCustom {
 
     Optional<Backup> findFirstByStatusOrderByEndedAtDesc(Backup.BackupStatus status);
 
-    // TODO 커서 기준 개선 필요 idAfter만 쓰면 동일 시간인 데이터는 하나만 가져오게됨.
+    // TODO 커서 기준 개선 필요. idAfter만 쓰면 동일 시간인 데이터는 하나만 가져오게됨.
     /*
     // 기본값
     @Query("""

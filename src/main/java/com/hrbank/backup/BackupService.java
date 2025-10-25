@@ -1,16 +1,18 @@
 package com.hrbank.backup;
 
-import com.hrbank.BackupSortType;
 import com.hrbank.backup.util.BackupFileNameUtils;
+import com.hrbank.employee.EmployeeRepository;
 import com.hrbank.exception.NotFoundException;
 import com.hrbank.backup.dto.BackupDto;
 import com.hrbank.backup.dto.BackupFindRequestDto;
 import com.hrbank.backup.dto.CursorPageResponseBackupDto;
 import com.hrbank.backup.util.CsvBackupWriter;
-import com.hrbank.repository.BackupRepository;
+import com.hrbank.backup.repository.BackupRepository;
+import com.hrbank.file.File;
+import com.hrbank.file.FileRepository;
+import com.hrbank.file.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.query.SortDirection;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +28,8 @@ import java.util.List;
 public class BackupService {
 
     private final BackupRepository backupRepository;
-//    private final EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
+    private final FileService fileService;
     private final CsvBackupWriter csvBackupWriter;
 
     @Transactional
@@ -133,7 +136,7 @@ public class BackupService {
         );
     }
 
-    // 아마 대시보드에서 사용할듯? - 마지막 백업 n일 전
+    // 대시보드에서 사용. (COMPLETED만)
     @Transactional(readOnly = true)
     public BackupDto findLatest(Backup.BackupStatus status) {
         Backup backup = backupRepository.findFirstByStatusOrderByEndedAtDesc(status)
