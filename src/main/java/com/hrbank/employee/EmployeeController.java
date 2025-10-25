@@ -91,6 +91,15 @@ public class EmployeeController {
           @RequestParam(defaultValue = "asc") SortDirection sortDirection
   ) {
 
+      EmployeeSearchRequest employeeSearchRequest = new EmployeeSearchRequest(
+              nameOrEmail, employeeNumber, departmentName, position, hireDateFrom, hireDateTo,
+              status, idAfter, cursor, size, sortField, sortDirection);
+      CursorPageResponseEmployeeDto filteredEmployeePage
+              = employeeService.getEmployeesByFilter(employeeSearchRequest);
+
+      return ResponseEntity
+              .status(HttpStatus.OK)
+              .body(filteredEmployeePage);
   }
 
 

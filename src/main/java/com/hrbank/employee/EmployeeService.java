@@ -1,5 +1,6 @@
 package com.hrbank.employee;
 
+import com.hrbank.employee.dto.*;
 import com.hrbank.employee.dto.EmployeeCreateRequest;
 import com.hrbank.employee.dto.EmployeeDistributionDto;
 import com.hrbank.employee.dto.EmployeeDto;
@@ -16,6 +17,8 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -156,6 +159,73 @@ public class EmployeeService{
       // 직원 상태 '퇴사'로 수정
       employee.setStatus(EmployeeStatus.RESIGNED);
   }
+
+  // 직원 목록 조회
+  @Transactional(readOnly = true)
+  public CursorPageResponseEmployeeDto getEmployeesByFilter(EmployeeSearchRequest searchRequest) {
+
+      Integer size = searchRequest.size();
+      String nextCursor = null; // 음... ㅡ.ㅡ 일단 null
+      Long totalElements = null;
+      Boolean hasNext = null;
+      Long nextIdAfter = null;
+
+
+      // 컨트롤러에서 들어온 요청 dto를 레포지토리에 보내기 위한 새로운 dto로 변환
+      EmployeeSearchCondition searchCondition = toEmployeeSearchConditionDto(searchRequest);
+      // 조건에 맞게 페이지네이션 된 List<Employee>, 조건에 맞는 Long totalElements, 다음 페이지 여부 Boolean hasNext 조회
+      EmployeeSearchResult searchResult = employeeRepository.searchEmployees(searchCondition);
+      List<Employee> searchEmployees = searchResult.employees();
+      totalElements = searchResult.totalElements();
+      hasNext = searchResult.hasNext();
+
+
+      // DTO 변환
+      List<EmployeeDto> employeeDtos = new ArrayList<>();
+      if (!searchEmployees.isEmpty()) {
+          for (Employee employee : searchEmployees) {
+              employeeDtos.add(employeeMapper.toEmployeeDto(employee));
+          }
+
+          // 페이지의 마지막 요소 조회
+          Employee lastEmployee = searchEmployees.get(searchEmployees.size() - 1);
+          nextIdAfter = lastEmployee.getId();
+      }
+
+      return new CursorPageResponseEmployeeDto(employeeDtos, nextCursor, nextIdAfter,
+      size, totalElements, hasNext);
+  }
+
+  // 직원 목록 조회 조건 toDto
+  private EmployeeSearchCondition toEmployeeSearchConditionDto(EmployeeSearchRequest searchRequest) {
+      String idAfterName = null;
+      String idAfterEmployeeNumber = null;
+      LocalDate idAfterHireDate = null;
+
+      if (searchRequest.idAfter() != null) {
+          // 이전 페이지 마지막 요소 조회
+          Employee idAfterEmployee = employeeRepository.findById(searchRequest.idAfter())
+                  .orElseThrow(() -> new NoSuchElementException("존재하지 않는 직원입니다."));
+
+          idAfterName = idAfterEmployee.getName();
+          idAfterEmployeeNumber = idAfterEmployee.getEmployeeNumber();
+          idAfterHireDate = idAfterEmployee.getHireDate();
+      }
+
+      return new EmployeeSearchCondition(
+              searchRequest.nameOrEmail(), searchRequest.employeeNumber(),
+              searchRequest.departmentName(), searchRequest.position(),
+              searchRequest.hireDateFrom(), searchRequest.hireDateTo(), searchRequest.status(),
+
+              searchRequest.idAfter(),
+              idAfterName,
+              idAfterHireDate,
+              idAfterEmployeeNumber,
+
+              searchRequest.size(), searchRequest.sortField(), searchRequest.sortDirection()
+      );
+  }
+
 
   /*
   # 직원 증감 추이 조회
