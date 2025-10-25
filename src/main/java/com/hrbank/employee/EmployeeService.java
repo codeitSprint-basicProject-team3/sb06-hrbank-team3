@@ -77,10 +77,10 @@ public class EmployeeService{
             .department(department)
             .file(savedProfileImage)
             .build();
-        employeeRepository.save(newEmployee);
 
-        // 수정 이력 생성 ( DTO 활용...? )
-        historyService.createCreateHistory(newEmployee, createRequest.memo());
+        newEmployee.addEmployeeHistory(historyService.createCreateHistory(newEmployee, createRequest.memo()));
+
+        employeeRepository.save(newEmployee);
 
         return employeeMapper.toEmployeeDto(newEmployee);
   }
@@ -228,9 +228,9 @@ public class EmployeeService{
 
 
   /*
-  # 직원 증감 추이 조회
+  # 직원 수 추이 조회
   조건 1. 현재 퇴직 상태가 아니고 (재직중,휴가중) 조회하려는 시기가 입사일 이후
-  조건 2. 현재 퇴직 상태이지만 조회하려는 시기가 createdAt과 updatedAt 사이에 있는 경우 (퇴직->재직이 없다는 전제)
+  조건 2. 직원이력의 afterValue가 퇴직 상태이고 조회하려는 시기가 직원의 createdAt과 직원이력의 createdAt 사이에 있는 경우
   조건 3. from 기본값: 현재로부터 unit 기준 12개 이전 (12달 이전)
   조건 4. to 기본값: 현재
   조건 5. unit 기본값: month

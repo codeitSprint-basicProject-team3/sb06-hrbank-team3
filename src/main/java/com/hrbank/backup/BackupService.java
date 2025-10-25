@@ -7,7 +7,9 @@ import com.hrbank.backup.dto.BackupDto;
 import com.hrbank.backup.dto.BackupFindRequestDto;
 import com.hrbank.backup.dto.CursorPageResponseBackupDto;
 import com.hrbank.backup.util.CsvBackupWriter;
-import com.hrbank.repository.BackupRepository;
+import com.hrbank.backup.repository.BackupRepository;
+import com.hrbank.file.File;
+import com.hrbank.file.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -27,6 +29,7 @@ public class BackupService {
     private final BackupRepository backupRepository;
 //    private final EmployeeRepository employeeRepository;
     private final CsvBackupWriter csvBackupWriter;
+    private final FileService fileService;
 
     @Transactional
     public BackupDto start(String worker){
@@ -70,7 +73,7 @@ public class BackupService {
             Path backupFile = csvBackupWriter.writeEmployeeBackup(backupDir, fileName);
 
             // DB에 메타데이터 저장
-            File metadata = fileService.createFileMetadata(backupFile);
+            File metadata = fileService.createMetadata(backupFile);
             backup.setFile(metadata);
             backup.setStatus(Backup.BackupStatus.COMPLETED);
 
