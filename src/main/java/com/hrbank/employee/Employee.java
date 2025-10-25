@@ -62,15 +62,6 @@ public class Employee {
   @JoinColumn(name = "profile_image_id")
   private File file;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "employee", cascade = CascadeType.ALL)
-  private List<EmployeeHistory> employeeHistories = new ArrayList<>();
-
-  public void addEmployeeHistory(EmployeeHistory history) {
-    employeeHistories.add(history);
-    if (history.getEmployee() != this) {
-      history.setEmployee(this);
-    }
-  }
 
   public void update(String newName, String newEmail, Department newDepartment, String newPosition,
                      LocalDate newHireDate, EmployeeStatus newStatus) {
