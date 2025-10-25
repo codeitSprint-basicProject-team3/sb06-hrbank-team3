@@ -32,7 +32,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
         // 정렬된 직원 리스트 및 조건
         EmployeeQueryResult queryResult = searchFilteredEmployees(searchCondition);
         List<Employee> employees = queryResult.employees;
-        Long totalElements = searchFiteredEmployeeCount(queryResult.builder);
+        Long totalElements = searchFilteredEmployeeCount(queryResult.builder);
 
         Boolean hasNext = false;
 
@@ -132,7 +132,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
     ){}
 
     // 조건 파라미터를 만족하는 직원 수 count
-    private Long searchFiteredEmployeeCount(BooleanBuilder builder) {
+    private Long searchFilteredEmployeeCount(BooleanBuilder builder) {
         return Optional.ofNullable(
                 queryFactory
                 .select(employee.count())
@@ -142,7 +142,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
     }
 
     // 페이지네이션 메소드
-    public void cursorPagination(BooleanBuilder builder, EmployeeSearchCondition searchCondition) {
+    private void cursorPagination(BooleanBuilder builder, EmployeeSearchCondition searchCondition) {
         BooleanBuilder cursorCondition = new BooleanBuilder();
 
         // 기준: 이름

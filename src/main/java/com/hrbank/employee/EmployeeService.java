@@ -171,9 +171,10 @@ public class EmployeeService{
       Long nextIdAfter = null;
 
 
+      // 컨트롤러에서 들어온 요청 dto를 레포지토리에 보내기 위한 새로운 dto로 변환
       EmployeeSearchCondition searchCondition = toEmployeeSearchConditionDto(searchRequest);
+      // 조건에 맞게 페이지네이션 된 List<Employee>, 조건에 맞는 Long totalElements, 다음 페이지 여부 Boolean hasNext 조회
       EmployeeSearchResult searchResult = employeeRepository.searchEmployees(searchCondition);
-      // 레포지토리에서 받아온 값으로 초기화
       List<Employee> searchEmployees = searchResult.employees();
       totalElements = searchResult.totalElements();
       hasNext = searchResult.hasNext();
