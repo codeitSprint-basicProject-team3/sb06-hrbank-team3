@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_USER: team03
       POSTGRES_PASSWORD: 3333
-      POSTGRES_DB: discodeit
+      POSTGRES_DB: hrbank
       TZ: Asia/Seoul
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     ports:
