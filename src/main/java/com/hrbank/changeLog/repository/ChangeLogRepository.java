@@ -13,8 +13,10 @@ import java.util.UUID;
 
 @Repository
 public interface ChangeLogRepository extends JpaRepository<ChangeLog, Long> {
-    List<ChangeLog> findByEmployeeId(UUID employeeId);
-    //List<EmployeeHistory> findByEmployeeIdAndType(UUID employeeId, ChangeType type);
+
+    // List<ChangeLog> findByEmployeeId(UUID employeeId); /미사용예정
+    //List<EmployeeHistory> findByEmployeeIdAndType(UUID employeeId, ChangeType type); /미사용예정
+    long countByCreatedAtBetween(Instant from, Instant to);
 
     @Query("""
         SELECT c FROM ChangeLog c
@@ -22,13 +24,13 @@ public interface ChangeLogRepository extends JpaRepository<ChangeLog, Long> {
           AND (:memo IS NULL OR c.memo LIKE %:memo%)
           AND (:ipAddress IS NULL OR c.ipAddress LIKE %:ipAddress%)
           AND (:type IS NULL OR c.type = :type)
-          AND (:from IS NULL OR c.at >= :from)
-          AND (:to IS NULL OR c.at <= :to)
+          AND (:from IS NULL OR c.createdAt >= :from)
+          AND (:to IS NULL OR c.createdAt <= :to)
         ORDER BY 
           CASE WHEN :sortField = 'ipAddress' AND :sortDirection = 'asc' THEN c.ipAddress END ASC,
           CASE WHEN :sortField = 'ipAddress' AND :sortDirection = 'desc' THEN c.ipAddress END DESC,
-          CASE WHEN :sortField = 'at' AND :sortDirection = 'asc' THEN c.at END ASC,
-          CASE WHEN :sortField = 'at' AND :sortDirection = 'desc' THEN c.at END DESC
+          CASE WHEN :sortField = 'at' AND :sortDirection = 'asc' THEN c.createdAt END ASC,
+          CASE WHEN :sortField = 'at' AND :sortDirection = 'desc' THEN c.createdAt END DESC
     """)
     List<ChangeLog> searchChangeLogs(
             @Param("employeeNumber") String employeeNumber,

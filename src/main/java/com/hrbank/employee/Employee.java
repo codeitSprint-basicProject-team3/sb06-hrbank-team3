@@ -1,5 +1,6 @@
 package com.hrbank.employee;
 
+import com.hrbank.department.entity.Department;
 import com.hrbank.employee.enums.EmployeeStatus;
 import com.hrbank.file.File;
 import jakarta.persistence.*;
