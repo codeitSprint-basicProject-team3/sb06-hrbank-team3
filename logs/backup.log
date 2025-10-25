@@ -2791,3 +2791,75 @@ Caused by: org.postgresql.util.PSQLException: ERROR: constraint "fk6nl7lf5sw4txk
 2025-10-25T16:13:28.825+09:00  INFO 1388 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-10-25T16:13:28.827+09:00  INFO 1388 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-10-25T16:13:28.831+09:00  INFO 1388 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-10-25T20:24:07.059+09:00  INFO 17304 --- [main] com.hrbank.HrbankApplication             : Starting HrbankApplication using Java 17.0.12 with PID 17304 (C:\Git_moon\sb06-hrbank-team3\build\classes\java\main started by 이호건 in C:\Git_moon\sb06-hrbank-team3)
+2025-10-25T20:24:07.062+09:00 DEBUG 17304 --- [main] com.hrbank.HrbankApplication             : Running with Spring Boot v3.5.6, Spring v6.2.11
+2025-10-25T20:24:07.063+09:00  INFO 17304 --- [main] com.hrbank.HrbankApplication             : No active profile set, falling back to 1 default profile: "default"
+2025-10-25T20:24:07.986+09:00  INFO 17304 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-25T20:24:08.097+09:00  INFO 17304 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 102 ms. Found 5 JPA repository interfaces.
+2025-10-25T20:24:08.724+09:00  INFO 17304 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-10-25T20:24:08.737+09:00  INFO 17304 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-10-25T20:24:08.738+09:00  INFO 17304 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-10-25T20:24:08.822+09:00  INFO 17304 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-10-25T20:24:08.822+09:00  INFO 17304 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1703 ms
+2025-10-25T20:24:09.006+09:00  INFO 17304 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-25T20:24:09.081+09:00  INFO 17304 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.29.Final
+2025-10-25T20:24:09.125+09:00  INFO 17304 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-10-25T20:24:09.494+09:00  INFO 17304 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-25T20:24:09.533+09:00  INFO 17304 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-10-25T20:24:09.678+09:00  INFO 17304 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@71e7c13f
+2025-10-25T20:24:09.681+09:00  INFO 17304 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-10-25T20:24:09.723+09:00  WARN 17304 --- [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-10-25T20:24:09.747+09:00  INFO 17304 --- [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.6
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-10-25T20:24:10.924+09:00  INFO 17304 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-10-25T20:24:11.032+09:00  INFO 17304 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-25T20:24:11.408+09:00  INFO 17304 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-10-25T20:24:12.019+09:00  WARN 17304 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'backupScheduler' defined in file [C:\Git_moon\sb06-hrbank-team3\build\classes\java\main\com\hrbank\backup\BackupScheduler.class]: Encountered invalid @Scheduled method 'runBackupJob': One-time task only supported with specified initial delay
+2025-10-25T20:24:12.019+09:00  INFO 17304 --- [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-10-25T20:24:12.021+09:00  INFO 17304 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-10-25T20:24:12.024+09:00  INFO 17304 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-10-25T20:24:12.027+09:00  INFO 17304 --- [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-10-25T20:24:12.038+09:00  INFO 17304 --- [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-10-25T20:24:12.058+09:00 ERROR 17304 --- [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'backupScheduler' defined in file [C:\Git_moon\sb06-hrbank-team3\build\classes\java\main\com\hrbank\backup\BackupScheduler.class]: Encountered invalid @Scheduled method 'runBackupJob': One-time task only supported with specified initial delay
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:614) ~[spring-beans-6.2.11.jar:6.2.11]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.11.jar:6.2.11]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.11.jar:6.2.11]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.11.jar:6.2.11]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.11.jar:6.2.11]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.11.jar:6.2.11]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1221) ~[spring-beans-6.2.11.jar:6.2.11]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1187) ~[spring-beans-6.2.11.jar:6.2.11]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1123) ~[spring-beans-6.2.11.jar:6.2.11]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987) ~[spring-context-6.2.11.jar:6.2.11]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.11.jar:6.2.11]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.6.jar:3.5.6]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.6.jar:3.5.6]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.6.jar:3.5.6]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.6.jar:3.5.6]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.6.jar:3.5.6]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.6.jar:3.5.6]
+	at com.hrbank.HrbankApplication.main(HrbankApplication.java:14) ~[main/:na]
+Caused by: java.lang.IllegalStateException: Encountered invalid @Scheduled method 'runBackupJob': One-time task only supported with specified initial delay
+	at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.processScheduledTask(ScheduledAnnotationBeanPostProcessor.java:525) ~[spring-context-6.2.11.jar:6.2.11]
+	at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.processScheduledSync(ScheduledAnnotationBeanPostProcessor.java:364) ~[spring-context-6.2.11.jar:6.2.11]
+	at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.processScheduled(ScheduledAnnotationBeanPostProcessor.java:343) ~[spring-context-6.2.11.jar:6.2.11]
+	at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.lambda$postProcessAfterInitialization$1(ScheduledAnnotationBeanPostProcessor.java:308) ~[spring-context-6.2.11.jar:6.2.11]
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[na:na]
+	at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.lambda$postProcessAfterInitialization$2(ScheduledAnnotationBeanPostProcessor.java:308) ~[spring-context-6.2.11.jar:6.2.11]
+	at java.base/java.util.LinkedHashMap.forEach(LinkedHashMap.java:721) ~[na:na]
+	at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.postProcessAfterInitialization(ScheduledAnnotationBeanPostProcessor.java:307) ~[spring-context-6.2.11.jar:6.2.11]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsAfterInitialization(AbstractAutowireCapableBeanFactory.java:445) ~[spring-beans-6.2.11.jar:6.2.11]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1829) ~[spring-beans-6.2.11.jar:6.2.11]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607) ~[spring-beans-6.2.11.jar:6.2.11]
+	... 17 common frames omitted
+

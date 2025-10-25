@@ -46,6 +46,9 @@ public class FileService {
   }
 
   public void deleteIfExists(Path backupFile){
+    if(backupFile == null) {
+      return;
+    }
     try {
       Files.deleteIfExists(backupFile);
     } catch (IOException e) {

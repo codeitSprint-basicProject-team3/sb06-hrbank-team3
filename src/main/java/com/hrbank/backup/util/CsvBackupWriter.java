@@ -39,13 +39,13 @@ public class CsvBackupWriter {
                 for (Employee e : employees) {
                     writer.write(String.format("%d,%s,%s,%s,%s",
                             e.getId(),
-                            e.employeeNumber(),
+                            e.getEmployeeNumber(),          // todo get 추가 수정 확인
                             e.getName(),
                             e.getEmail(),
                             e.getDepartment(),
                             e.getPosition(),
                             e.getHireDate(),
-                            e.status()));
+                            e.getStatus()));
 
                     writer.newLine();
                 }

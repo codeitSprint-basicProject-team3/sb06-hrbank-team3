@@ -11,6 +11,8 @@ import com.hrbank.backup.util.CsvBackupWriter;
 import com.hrbank.backup.repository.BackupRepository;
 import com.hrbank.file.File;
 import com.hrbank.file.FileService;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -40,7 +42,10 @@ public class BackupService {
                 .orElse(null);
 
         LocalDateTime lastBackupTime = lastBackup != null ? lastBackup.getEndedAt() : LocalDateTime.MIN;
-        boolean hasChanged = employeeRepository.existsByUpdatedAtAfter(lastBackupTime);
+        // todo LocalDateTime -> Instant 수정 확인 필요 -이호건
+        Instant toInstant = lastBackupTime.atOffset(ZoneOffset.UTC).toInstant();
+        // todo boolean -> Boolean 수정 확인 필요 -이호건
+        Boolean hasChanged = employeeRepository.existsByUpdatedAtAfter(toInstant);
 
         // 변경 없으면 건너뜀 - 파일 생성하지 않음.
         if (!hasChanged) {
@@ -62,6 +67,9 @@ public class BackupService {
                 .build();
         backupRepository.save(backup);
 
+        // todo 수정 확인
+        Path backupFile = null;
+
         // CSV 파일 생성 -> 로컬에 파일을, DB에 메타데이터를 저장
         try {
             // 로컬에 파일 저장
@@ -71,7 +79,7 @@ public class BackupService {
             // 2. 파일 경로 설정
             Path backupDir = Paths.get("com/hrbank/backup/files");
             // 3. 파일 생성
-            Path backupFile = csvBackupWriter.writeEmployeeBackup(backupDir, fileName);
+            backupFile = csvBackupWriter.writeEmployeeBackup(backupDir, fileName);
 
             // DB에 메타데이터 저장
             File metadata = fileService.createMetadata(backupFile);

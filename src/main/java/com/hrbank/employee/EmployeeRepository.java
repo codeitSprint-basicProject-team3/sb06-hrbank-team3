@@ -12,6 +12,8 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>, Employ
 
   Boolean existsByEmail(String email);
 
+  Boolean existsByUpdatedAtAfter(Instant toInstant);
+
   Long countAllByStatusNotAndHireDateLessThanEqual(EmployeeStatus resignedStatus,  LocalDate current);
 
 //  @Query("""

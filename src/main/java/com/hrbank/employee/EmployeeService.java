@@ -3,10 +3,13 @@ package com.hrbank.employee;
 import com.hrbank.changeLog.service.ChangeLogService;
 import com.hrbank.department.entity.Department;
 import com.hrbank.department.repository.DepartmentRepository;
-import com.hrbank.employee.dto.*;
+import com.hrbank.employee.dto.CursorPageResponseEmployeeDto;
 import com.hrbank.employee.dto.EmployeeCreateRequest;
 import com.hrbank.employee.dto.EmployeeDistributionDto;
 import com.hrbank.employee.dto.EmployeeDto;
+import com.hrbank.employee.dto.EmployeeSearchCondition;
+import com.hrbank.employee.dto.EmployeeSearchRequest;
+import com.hrbank.employee.dto.EmployeeSearchResult;
 import com.hrbank.employee.dto.EmployeeTrendDto;
 import com.hrbank.employee.dto.EmployeeUpdateRequest;
 import com.hrbank.employee.enums.EmployeeGroupBy;
@@ -20,8 +23,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -81,7 +82,7 @@ public class EmployeeService{
             .file(savedProfileImage)
             .build();
 
-        newEmployee.addEmployeeHistory(historyService.createCreateHistory(newEmployee, createRequest.memo()));
+    historyService.createCreateChangeLog(newEmployee, createRequest.memo());
 
         employeeRepository.save(newEmployee);
 
@@ -136,7 +137,7 @@ public class EmployeeService{
 
 
       // 직원 수정 이력 - '수정' 생성
-      historyService.createUpdateHistory(employee, updateRequest.memo());
+      historyService.createUpdateChangeLog(employee, updateRequest.memo());
 
       return employeeMapper.toEmployeeDto(employee);
   }
@@ -157,7 +158,7 @@ public class EmployeeService{
       }
 
       // 직원 수정 이력 - '삭제' 생성
-      historyService.createResignHistory(employee);
+      historyService.createResignChangeLog(employee);
 
       // 직원 상태 '퇴사'로 수정
       employee.setStatus(EmployeeStatus.RESIGNED);
@@ -296,8 +297,8 @@ public class EmployeeService{
   // 조건 1 + 조건 2
   public Long employeeNumberThisDay(LocalDate date) {
     Instant toInstant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
-    return employeeRepository.countAllByStatusNotAndHireDateLessThanEqual(EmployeeStatus.RESIGNED, date)
-        + employeeRepository.countAllByStatusAtInstant(EmployeeStatus.RESIGNED, toInstant);
+    return employeeRepository.countAllByStatusNotAndHireDateLessThanEqual(EmployeeStatus.RESIGNED, date);
+//   todo     + employeeRepository.countAllByStatusAtInstant(EmployeeStatus.RESIGNED, toInstant);
   }
 
   /*

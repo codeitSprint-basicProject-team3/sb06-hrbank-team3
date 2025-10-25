@@ -5,7 +5,7 @@ import com.hrbank.department.dto.request.CreateDepartmentRequest;
 import com.hrbank.department.dto.request.UpdateDepartmentRequest;
 import com.hrbank.department.dto.response.DepartmentResponse;
 import com.hrbank.department.entity.Department;
-import com.hrbank.department.exception.NotFoundException;
+import com.hrbank.exception.NotFoundException;
 import com.hrbank.department.mapper.DepartmentMapper;
 import com.hrbank.department.repository.DepartmentRepository;
 import com.hrbank.department.repository.specification.DepartmentSpecification;
