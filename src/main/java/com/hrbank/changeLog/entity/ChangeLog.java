@@ -43,6 +43,6 @@ public class ChangeLog {
     @Column(name = "ip_address")
     private String ipAddress;
 
-    @Column(nullable = false)
+    @Column(name = "created_at",nullable = false)
     private Instant at;
 }

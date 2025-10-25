@@ -20,7 +20,7 @@ public class EmployeeMapper {
                 employee.getName(),
                 employee.getEmail(),
                 employee.getEmployeeNumber(),
-                employee.getDepartment(),
+                employee.getDepartment().getId(),
                 employee.getDepartment().getName(),
                 employee.getPosition(),
                 employee.getHireDate(),

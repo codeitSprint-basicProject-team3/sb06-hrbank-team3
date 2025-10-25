@@ -4,6 +4,7 @@ import com.hrbank.employee.Employee;
 import com.hrbank.changeLog.entity.ChangeType;
 import com.hrbank.changeLog.entity.ChangeLog;
 import com.hrbank.changeLog.repository.ChangeLogRepository;
+import com.hrbank.employee.EmployeeRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class ChangeLogService {
                 .afterValue("직원 신규 등록")
                 .memo(memo)
                 .ipAddress(ipAddress)
-                .createdAt(Instant.now())
+                .at(Instant.now())
                 .build();
         historyRepository.save(history);
     }

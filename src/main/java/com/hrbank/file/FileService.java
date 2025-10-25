@@ -40,7 +40,7 @@ public class FileService {
   public File createMetadata(Path backupFile) throws IOException {
     return File.builder()
         .name(backupFile.getFileName().toString().replaceFirst("\\.csv$", ""))
-        .contentType("csv")
+        .extension("csv")
         .size(Files.size(backupFile))
         .build();
   }

@@ -1,5 +1,6 @@
 package com.hrbank.employee;
 
+import com.hrbank.department.entity.QDepartment;
 import com.hrbank.employee.dto.EmployeeSearchCondition;
 import com.hrbank.employee.dto.EmployeeSearchResult;
 import com.hrbank.employee.enums.SortDirection;

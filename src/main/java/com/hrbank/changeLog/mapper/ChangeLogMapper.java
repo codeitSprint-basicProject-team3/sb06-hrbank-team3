@@ -16,6 +16,6 @@ public interface ChangeLogMapper {
 
     List<ChangeLogDto> toChangeLogDtos(List<ChangeLog> entities);
 
-    @Mapping(source = "employee.employeeNumber", target = "employeeNumber")
+    @Mapping(source = "entity.employee.employeeNumber", target = "employeeNumber")
     ChangeLogDetailResponse toChangeLogDetailResponse(ChangeLog entity, List<DiffDto> diffs);
 }

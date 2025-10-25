@@ -40,6 +40,7 @@ public class Department {
   private LocalDate establishedDate;
 
   @OneToMany(mappedBy = "department")
+  @Builder.Default
   private List<Employee> employees = new ArrayList<>();
 
   // === 연관관계 편의 메서드  === //

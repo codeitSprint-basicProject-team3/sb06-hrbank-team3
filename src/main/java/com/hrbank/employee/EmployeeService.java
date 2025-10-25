@@ -1,5 +1,8 @@
 package com.hrbank.employee;
 
+import com.hrbank.changeLog.service.ChangeLogService;
+import com.hrbank.department.entity.Department;
+import com.hrbank.department.repository.DepartmentRepository;
 import com.hrbank.employee.dto.*;
 import com.hrbank.employee.dto.EmployeeCreateRequest;
 import com.hrbank.employee.dto.EmployeeDistributionDto;
@@ -38,7 +41,7 @@ public class EmployeeService{
 
   private final EmployeeMapper employeeMapper;
 
-  private final EmployeeHistoryService historyService;
+  private final ChangeLogService historyService;
   private final FileService fileService;
 
   // 직원 등록

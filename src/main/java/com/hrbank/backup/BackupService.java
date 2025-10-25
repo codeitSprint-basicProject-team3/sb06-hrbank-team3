@@ -1,7 +1,8 @@
 package com.hrbank.backup;
 
 import com.hrbank.backup.util.BackupFileNameUtils;
-import com.hrbank.SortField;
+
+import com.hrbank.employee.EmployeeRepository;
 import com.hrbank.exception.NotFoundException;
 import com.hrbank.backup.dto.BackupDto;
 import com.hrbank.backup.dto.BackupFindRequestDto;
@@ -27,9 +28,9 @@ import java.util.List;
 public class BackupService {
 
     private final BackupRepository backupRepository;
-//    private final EmployeeRepository employeeRepository;
     private final CsvBackupWriter csvBackupWriter;
     private final FileService fileService;
+    private final EmployeeRepository employeeRepository;
 
     @Transactional
     public BackupDto start(String worker){
