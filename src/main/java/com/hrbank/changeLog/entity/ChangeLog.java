@@ -4,7 +4,6 @@ package com.hrbank.changeLog.entity;
 import com.hrbank.employee.Employee;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
 
@@ -44,7 +43,6 @@ public class ChangeLog {
     @Column(name = "ip_address")
     private String ipAddress;
 
-    @CreatedDate
     @Column(name = "created_at",nullable = false)
-    private Instant createdAt;
+    private Instant at;
 }
