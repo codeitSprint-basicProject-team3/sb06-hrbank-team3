@@ -9,7 +9,7 @@ public record ChangeLogDetailResponse(
         String employeeNumber,
         String memo,
         String ipAddress,
-        Instant createdAt,
+        Instant at,
         List<DiffDto> diffs
 ) {
 }
