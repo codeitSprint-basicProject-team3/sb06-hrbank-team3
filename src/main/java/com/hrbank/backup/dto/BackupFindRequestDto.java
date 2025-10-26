@@ -1,10 +1,11 @@
 package com.hrbank.backup.dto;
 
-import com.hrbank.backup.Backup;
-import com.hrbank.backup.SortDirection;
-import com.hrbank.backup.SortField;
+import com.hrbank.backup.entity.Backup;
+import com.hrbank.backup.enums.SortField;
+import com.hrbank.employee.enums.SortDirection;
 import lombok.Builder;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +20,6 @@ public record BackupFindRequestDto(
         String cursor,
         Integer size,
         SortField sortField,
-        SortDirection sortDirection
+        Sort.Direction sortDirection
 ) {
 }

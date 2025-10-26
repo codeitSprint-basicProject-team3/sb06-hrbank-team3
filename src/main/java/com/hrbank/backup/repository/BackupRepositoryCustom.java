@@ -1,6 +1,6 @@
 package com.hrbank.backup.repository;
 
-import com.hrbank.backup.Backup;
+import com.hrbank.backup.entity.Backup;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
