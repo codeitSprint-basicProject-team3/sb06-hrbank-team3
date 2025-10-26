@@ -42,7 +42,7 @@ public class EmployeeService{
 
   private final EmployeeMapper employeeMapper;
 
-  private final ChangeLogService historyService;
+  private final ChangeLogService changeLogService;
   private final FileService fileService;
 
   // 직원 등록
@@ -84,7 +84,7 @@ public class EmployeeService{
 
     employeeRepository.save(newEmployee);
 
-    historyService.createCreateChangeLog(newEmployee, createRequest.memo());
+    changeLogService.createCreateChangeLog(newEmployee, createRequest.memo());
 
     return employeeMapper.toEmployeeDto(newEmployee);
   }
@@ -137,7 +137,7 @@ public class EmployeeService{
 
 
       // 직원 수정 이력 - '수정' 생성
-      historyService.createUpdateChangeLog(employee, updateRequest.memo());
+      changeLogService.createUpdateChangeLog(employee, updateRequest.memo());
 
       return employeeMapper.toEmployeeDto(employee);
   }
@@ -158,7 +158,7 @@ public class EmployeeService{
       }
 
       // 직원 수정 이력 - '삭제' 생성
-      historyService.createResignChangeLog(employee);
+      changeLogService.createResignChangeLog(employee);
 
       // 직원 상태 '퇴사'로 수정
       employee.setStatus(EmployeeStatus.RESIGNED);
