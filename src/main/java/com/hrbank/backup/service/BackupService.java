@@ -64,7 +64,6 @@ public class BackupService {
                 .worker(worker)
                 .startedAt(LocalDateTime.now())
                 .status(Backup.BackupStatus.IN_PROGRESS)
-                // .file()
                 .build();
         backupRepository.save(backup);
 
