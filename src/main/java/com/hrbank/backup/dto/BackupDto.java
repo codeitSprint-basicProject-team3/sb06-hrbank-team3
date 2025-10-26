@@ -1,6 +1,6 @@
 package com.hrbank.backup.dto;
 
-import com.hrbank.backup.Backup;
+import com.hrbank.backup.entity.Backup;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -21,7 +21,7 @@ public record BackupDto (
                 .startedAt(backup.getStartedAt())
                 .endedAt(backup.getEndedAt())
                 .status(backup.getStatus())
-                // .fileId(backup.getFile() != null ? backup.getFile().getId() : null)
+                .fileId(backup.getFile() != null ? backup.getFile().getId() : null)
                 .build();
     }
 }
