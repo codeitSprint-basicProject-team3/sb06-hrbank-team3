@@ -1,6 +1,6 @@
 package com.hrbank.backup.controller;
 
-import com.hrbank.backup.Backup;
+import com.hrbank.backup.entity.Backup;
 import com.hrbank.backup.dto.BackupDto;
 import com.hrbank.backup.dto.BackupFindRequestDto;
 import com.hrbank.backup.dto.CursorPageResponseBackupDto;

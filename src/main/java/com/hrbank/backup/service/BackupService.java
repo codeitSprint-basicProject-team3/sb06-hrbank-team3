@@ -1,11 +1,10 @@
 package com.hrbank.backup.service;
 
-import com.hrbank.backup.Backup;
+import com.hrbank.backup.entity.Backup;
 import com.hrbank.backup.BackupSortType;
 import com.hrbank.backup.util.BackupFileNameUtils;
 
 import com.hrbank.employee.EmployeeRepository;
-import com.hrbank.employee.enums.SortField;
 import com.hrbank.exception.NotFoundException;
 import com.hrbank.backup.dto.BackupDto;
 import com.hrbank.backup.dto.BackupFindRequestDto;

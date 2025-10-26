@@ -1,4 +1,4 @@
-package com.hrbank.backup;
+package com.hrbank.backup.entity;
 
 import com.hrbank.file.File;
 import jakarta.persistence.*;
