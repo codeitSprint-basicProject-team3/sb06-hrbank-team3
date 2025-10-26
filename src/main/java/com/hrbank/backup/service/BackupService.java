@@ -67,8 +67,7 @@ public class BackupService {
                 .build();
         backupRepository.save(backup);
 
-        // todo 수정 확인
-        Path backupFile = null;
+        Path backupFile = null; // 수정 확인
 
         // CSV 파일 생성 -> 로컬에 파일을, DB에 메타데이터를 저장
         try {

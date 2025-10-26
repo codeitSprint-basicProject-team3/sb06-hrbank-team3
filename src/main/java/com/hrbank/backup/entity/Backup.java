@@ -28,9 +28,9 @@ public class Backup {
     @Enumerated(EnumType.STRING)
     private BackupStatus status;
 
-     @OneToOne
-     @JoinColumn(name = "backup_file_id") // NULL 허용 (FAILED, SKIPPED)
-     private File file;
+    @OneToOne
+    @JoinColumn(name = "backup_file_id") // NULL 허용 (FAILED, SKIPPED)
+    private File file;
 
     public enum BackupStatus {
         IN_PROGRESS, COMPLETED, FAILED, SKIPPED
