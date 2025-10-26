@@ -300,6 +300,10 @@ public class EmployeeService{
     Instant toInstant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
     return employeeRepository.countAllByStatusNotAndHireDateLessThanEqual(EmployeeStatus.RESIGNED, date);
 //   todo     + employeeRepository.countAllByStatusAtInstant(EmployeeStatus.RESIGNED, toInstant);
+//    + employeeHistoryRepository.countAllByAfterValueAtInstant("RESIGNED", toInstant);
+    // 직원 입사일 이후 ("") + 직원 퇴사일 이전 ("RESIGNED", createdAt)
+
+
   }
 
   /*
