@@ -1,7 +1,7 @@
 package com.hrbank.backup.service;
 
 import com.hrbank.backup.entity.Backup;
-import com.hrbank.backup.BackupSortType;
+import com.hrbank.backup.enums.SortField;
 import com.hrbank.backup.util.BackupFileNameUtils;
 
 import com.hrbank.employee.EmployeeRepository;
@@ -102,10 +102,12 @@ public class BackupService {
 
         // 기본값 처리
         int size = dto.size() != null ? dto.size() : 10;
-        BackupSortType backupSortType = dto.backupSortType() != null ? dto.backupSortType() : BackupSortType.STARTED_AT_DESC;
 
-        boolean ascending = (backupSortType == BackupSortType.STARTED_AT_ASC ||  backupSortType == BackupSortType.ENDED_AT_ASC);
-        boolean useEndedAt = (backupSortType == BackupSortType.ENDED_AT_DESC ||  backupSortType == BackupSortType.ENDED_AT_ASC);
+        Sort.Direction sortDirection =  dto.sortDirection() != null ? dto.sortDirection() : Sort.Direction.DESC;
+        SortField sortField = dto.sortField() != null ? dto.sortField() : SortField.startedAt;
+
+        boolean ascending = (sortDirection == Sort.Direction.ASC);
+        boolean useEndedAt = (sortField == SortField.endedAt);
 
         // 커서 페이징 설정
         Pageable pageable = PageRequest.of(0, size, Sort.by("id").descending());
