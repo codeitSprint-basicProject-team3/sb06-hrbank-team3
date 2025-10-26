@@ -1,5 +1,7 @@
-package com.hrbank.backup;
+package com.hrbank.backup.service;
 
+import com.hrbank.backup.entity.Backup;
+import com.hrbank.backup.enums.SortField;
 import com.hrbank.backup.util.BackupFileNameUtils;
 
 import com.hrbank.employee.EmployeeRepository;
@@ -44,7 +46,6 @@ public class BackupService {
         LocalDateTime lastBackupTime = lastBackup != null ? lastBackup.getEndedAt() : LocalDateTime.MIN;
         // todo LocalDateTime -> Instant 수정 확인 필요 -이호건
         Instant toInstant = lastBackupTime.atOffset(ZoneOffset.UTC).toInstant();
-        // todo boolean -> Boolean 수정 확인 필요 -이호건
         Boolean hasChanged = employeeRepository.existsByUpdatedAtAfter(toInstant);
 
         // 변경 없으면 건너뜀 - 파일 생성하지 않음.
@@ -63,12 +64,10 @@ public class BackupService {
                 .worker(worker)
                 .startedAt(LocalDateTime.now())
                 .status(Backup.BackupStatus.IN_PROGRESS)
-                // .file()
                 .build();
         backupRepository.save(backup);
 
-        // todo 수정 확인
-        Path backupFile = null;
+        Path backupFile = null; // 수정 확인
 
         // CSV 파일 생성 -> 로컬에 파일을, DB에 메타데이터를 저장
         try {
@@ -103,11 +102,12 @@ public class BackupService {
 
         // 기본값 처리
         int size = dto.size() != null ? dto.size() : 10;
-        SortField sortField = dto.sortField() != null ? dto.sortField() : SortField.STARTED_AT;
-        SortDirection sortDirection = dto.sortDirection() != null ? dto.sortDirection() : SortDirection.DESC;
 
-        boolean ascending = (sortDirection == SortDirection.ASC);
-        boolean useEndedAt = (sortField == SortField.ENDED_AT);
+        Sort.Direction sortDirection =  dto.sortDirection() != null ? dto.sortDirection() : Sort.Direction.DESC;
+        SortField sortField = dto.sortField() != null ? dto.sortField() : SortField.startedAt;
+
+        boolean ascending = (sortDirection == Sort.Direction.ASC);
+        boolean useEndedAt = (sortField == SortField.endedAt);
 
         // 커서 페이징 설정
         Pageable pageable = PageRequest.of(0, size, Sort.by("id").descending());

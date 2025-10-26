@@ -1,7 +1,7 @@
 package com.hrbank.backup.repository;
 
-import com.hrbank.backup.Backup;
-import com.hrbank.backup.QBackup;
+import com.hrbank.backup.entity.Backup;
+import com.hrbank.backup.entity.QBackup;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
