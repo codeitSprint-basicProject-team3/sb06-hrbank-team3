@@ -107,14 +107,14 @@ public class EmployeeController {
   public ResponseEntity<List<EmployeeTrendDto>> getCountByTrend(
       @RequestParam(required = false) LocalDate from,
       @RequestParam(required = false) LocalDate to,
-      @RequestParam(defaultValue = "month") PeriodUnit unit
+      @RequestParam(defaultValue = "month") String unit
   ) {
     return ResponseEntity.ok(employeeService.getEmployeeChangeTrend(from,to,unit));
   }
 
   @GetMapping("/stats/distribution")
   public ResponseEntity<List<EmployeeDistributionDto>> getEmployeeDistribution(
-      @RequestParam(defaultValue = "department") EmployeeGroupBy groupBy,
+      @RequestParam(defaultValue = "department") String groupBy,
       @RequestParam(defaultValue = "ACTIVE") EmployeeStatus status
   ){
       return ResponseEntity.ok(employeeService.findDistributedEmployee(groupBy, status));

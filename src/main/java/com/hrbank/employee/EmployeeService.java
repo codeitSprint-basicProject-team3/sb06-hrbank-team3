@@ -240,7 +240,7 @@ public class EmployeeService{
   조건 5. unit 기본값: month
    */
   @Transactional(readOnly = true)
-  public List<EmployeeTrendDto> getEmployeeChangeTrend(LocalDate from, LocalDate to, PeriodUnit unit) {
+  public List<EmployeeTrendDto> getEmployeeChangeTrend(LocalDate from, LocalDate to, String unit) {
     if (from == null) {
       from = LocalDate.now().minusMonths(12);
     }
@@ -249,11 +249,12 @@ public class EmployeeService{
     }
     List<EmployeeTrendDto> dtoList = new ArrayList<>();
     Period period = switch (unit) {
-      case DAY -> Period.ofDays(1);
-      case WEEK -> Period.ofWeeks(1);
-      case MONTH -> Period.ofMonths(1);
-      case QUARTER -> Period.ofMonths(3);
-      case YEAR -> Period.ofYears(1);
+      case "day" -> Period.ofDays(1);
+      case "week" -> Period.ofWeeks(1);
+      case "month" -> Period.ofMonths(1);
+      case "quarter" -> Period.ofMonths(3);
+      case "year" -> Period.ofYears(1);
+      default -> throw new IllegalStateException("정해지지 않은 날짜 조건입니다 " + unit);
     };
     collectTrendByPeriod(period, from, to, dtoList);
     return dtoList;
@@ -326,12 +327,12 @@ public class EmployeeService{
   조건 3. 세부이름을 기준으로 데이터를 리스트로 반환
    */
   @Transactional(readOnly = true)
-  public List<EmployeeDistributionDto> findDistributedEmployee(EmployeeGroupBy groupBy, EmployeeStatus status) {
+  public List<EmployeeDistributionDto> findDistributedEmployee(String groupBy, EmployeeStatus status) {
     Long statusCount = employeeRepository.countAllByStatus(status);
     List<Object[]> result;
-    if (EmployeeGroupBy.DEPARTMENT.equals(groupBy)) {
+    if (groupBy.equals("department")) {
       result = employeeRepository.countAllByStatusGroupByDepartment(status);
-    } else {  // POSITION
+    } else {  // position
       result = employeeRepository.countAllByStatusGroupByPosition(status);
     }
     return toDtoList(result, statusCount);
