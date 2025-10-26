@@ -3,6 +3,7 @@ package com.hrbank.backup;
 import com.hrbank.backup.util.BackupFileNameUtils;
 
 import com.hrbank.employee.EmployeeRepository;
+import com.hrbank.employee.enums.SortField;
 import com.hrbank.exception.NotFoundException;
 import com.hrbank.backup.dto.BackupDto;
 import com.hrbank.backup.dto.BackupFindRequestDto;
@@ -44,7 +45,6 @@ public class BackupService {
         LocalDateTime lastBackupTime = lastBackup != null ? lastBackup.getEndedAt() : LocalDateTime.MIN;
         // todo LocalDateTime -> Instant 수정 확인 필요 -이호건
         Instant toInstant = lastBackupTime.atOffset(ZoneOffset.UTC).toInstant();
-        // todo boolean -> Boolean 수정 확인 필요 -이호건
         Boolean hasChanged = employeeRepository.existsByUpdatedAtAfter(toInstant);
 
         // 변경 없으면 건너뜀 - 파일 생성하지 않음.
@@ -103,11 +103,10 @@ public class BackupService {
 
         // 기본값 처리
         int size = dto.size() != null ? dto.size() : 10;
-        SortField sortField = dto.sortField() != null ? dto.sortField() : SortField.STARTED_AT;
-        SortDirection sortDirection = dto.sortDirection() != null ? dto.sortDirection() : SortDirection.DESC;
+        BackupSortType backupSortType = dto.backupSortType() != null ? dto.backupSortType() : BackupSortType.STARTED_AT_DESC;
 
-        boolean ascending = (sortDirection == SortDirection.ASC);
-        boolean useEndedAt = (sortField == SortField.ENDED_AT);
+        boolean ascending = (backupSortType == BackupSortType.STARTED_AT_ASC ||  backupSortType == BackupSortType.ENDED_AT_ASC);
+        boolean useEndedAt = (backupSortType == BackupSortType.ENDED_AT_DESC ||  backupSortType == BackupSortType.ENDED_AT_ASC);
 
         // 커서 페이징 설정
         Pageable pageable = PageRequest.of(0, size, Sort.by("id").descending());

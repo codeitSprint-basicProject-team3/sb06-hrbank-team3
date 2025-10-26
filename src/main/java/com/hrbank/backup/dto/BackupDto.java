@@ -21,7 +21,7 @@ public record BackupDto (
                 .startedAt(backup.getStartedAt())
                 .endedAt(backup.getEndedAt())
                 .status(backup.getStatus())
-                // .fileId(backup.getFile() != null ? backup.getFile().getId() : null)
+                .fileId(backup.getFile() != null ? backup.getFile().getId() : null)
                 .build();
     }
 }

@@ -1,8 +1,7 @@
 package com.hrbank.backup.dto;
 
 import com.hrbank.backup.Backup;
-import com.hrbank.backup.SortDirection;
-import com.hrbank.backup.SortField;
+import com.hrbank.backup.BackupSortType;
 import lombok.Builder;
 import org.springdoc.core.annotations.ParameterObject;
 
@@ -18,7 +17,6 @@ public record BackupFindRequestDto(
         Long idAfter,
         String cursor,
         Integer size,
-        SortField sortField,
-        SortDirection sortDirection
+        BackupSortType backupSortType
 ) {
 }

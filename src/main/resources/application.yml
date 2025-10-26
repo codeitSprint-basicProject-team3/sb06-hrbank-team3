@@ -23,7 +23,7 @@ spring:
 server:
   port: 8080
 
-# 백업 Batch 설정
+# 백업 Batch 및 저장 경로 설정
 hrbank:
   backup:
     schedule:

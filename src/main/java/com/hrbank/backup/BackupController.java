@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/backups")
+@RequestMapping("/api/backups")
 @RequiredArgsConstructor
 @Slf4j
 public class BackupController {
