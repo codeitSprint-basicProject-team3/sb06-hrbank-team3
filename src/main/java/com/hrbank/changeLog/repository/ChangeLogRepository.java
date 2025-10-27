@@ -32,8 +32,8 @@ public interface ChangeLogRepository extends JpaRepository<ChangeLog, Long> {
         ORDER BY 
           CASE WHEN :sortField = 'ipAddress' AND :sortDirection = 'asc' THEN c.ipAddress END ASC,
           CASE WHEN :sortField = 'ipAddress' AND :sortDirection = 'desc' THEN c.ipAddress END DESC,
-          CASE WHEN :sortField = 'createdAt' AND :sortDirection = 'asc' THEN c.createdAt END ASC,
-          CASE WHEN :sortField = 'createdAt' AND :sortDirection = 'desc' THEN c.createdAt END DESC
+          CASE WHEN :sortField = 'at' AND :sortDirection = 'asc' THEN c.createdAt END ASC,
+          CASE WHEN :sortField = 'at' AND :sortDirection = 'desc' THEN c.createdAt END DESC
     """)
     List<ChangeLog> searchChangeLogs(
             @Param("employeeNumber") String employeeNumber,
