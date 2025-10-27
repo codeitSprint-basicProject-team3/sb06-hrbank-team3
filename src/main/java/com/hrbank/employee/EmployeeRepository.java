@@ -18,10 +18,10 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>, Employ
 
   Long countAllByStatusAndHireDateBetween(EmployeeStatus status, LocalDate fromDate, LocalDate toDate);
 
-  @Query(value = "SELECT COUNT(e) FROM Employee e WHERE e.status = :status GROUP BY e.department")
+  @Query(value = "SELECT e.department.name,COUNT(e) FROM Employee e WHERE e.status = :status GROUP BY e.department")
   List<Object[]> countAllByStatusGroupByDepartment(EmployeeStatus status);
 
-  @Query(value = "SELECT COUNT(e) FROM Employee e WHERE e.status = :status GROUP BY e.position")
+  @Query(value = "SELECT e.position,COUNT(e) FROM Employee e WHERE e.status = :status GROUP BY e.position")
   List<Object[]> countAllByStatusGroupByPosition(EmployeeStatus status);
 
   Long countAllByStatus(EmployeeStatus status);
