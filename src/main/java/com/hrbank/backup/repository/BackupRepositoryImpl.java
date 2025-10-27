@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -19,8 +19,8 @@ public class BackupRepositoryImpl implements BackupRepositoryCustom{
     @Override
     public Slice<Backup> search(
             Long idAfter,
-            LocalDateTime start,
-            LocalDateTime end,
+            Instant start,
+            Instant end,
             String worker,
             Backup.BackupStatus status,
             boolean ascending,
