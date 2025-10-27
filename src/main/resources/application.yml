@@ -69,7 +69,7 @@ spring:
   # 2. JPA 설정
   jpa:
     hibernate:
-      ddl-auto: create-drop 
+      ddl-auto: update 
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
