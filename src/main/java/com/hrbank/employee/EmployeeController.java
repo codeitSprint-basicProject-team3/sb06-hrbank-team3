@@ -122,7 +122,7 @@ public class EmployeeController {
 
   @GetMapping("/count")
   public ResponseEntity<Long> getCountByDateRange(
-      @RequestParam EmployeeStatus status,
+      @RequestParam(defaultValue = "ACTIVE") EmployeeStatus status,
       @RequestParam(required = false) LocalDate fromDate,
       @RequestParam(required = false) LocalDate toDate
   ){
