@@ -143,7 +143,6 @@ public class ChangeLogService {
 
 
     //목록 조회
-    //로직구성 미완성 /추후 수정예정
     @Transactional
     public CursorPageResponseChangeLogDto getChangeLogs(
             String employeeNumber,
@@ -157,8 +156,9 @@ public class ChangeLogService {
             Integer size,
             String sortField,
             String sortDirection
-    ) {
-        /*// 리포지토리에서 정렬까지 포함해 전부 가져옴
+    )
+    {
+        // 리포지토리에서 정렬까지 포함해 전부 가져옴
         List<ChangeLog> all = changeLogRepository.searchChangeLogs(
                 employeeNumber, memo, ipAddress, type, atFrom, atTo, sortField, sortDirection
         );
@@ -168,10 +168,40 @@ public class ChangeLogService {
         if (idAfter != null) {
             filtered = filtered.stream()
                     .filter(h -> h.getId() > idAfter)
-                    .collect(Collectors.toList());*/
+                    .collect(Collectors.toList());
+        } else if (cursor != null && !cursor.isBlank()) {
+            try {
+                String decoded = new String(Base64.getDecoder().decode(cursor));
+                if (decoded.startsWith("id:")) {
+                    long lastId = Long.parseLong(decoded.substring(3));
+                    long threshold = lastId;
+                    filtered = filtered.stream()
+                            .filter(h -> h.getId() > threshold)
+                            .collect(Collectors.toList());
+                }
+            } catch (IllegalArgumentException ignore) {}
+        }
+        //페이징
+        int pageSize = (size == null || size <= 0) ? 10 : size;
+        List<ChangeLog> page = filtered.stream().limit(pageSize).toList();
 
+        //다음커서 설정
+        Long nextIdAfter = page.isEmpty() ? null : page.get(page.size() - 1).getId();
+        String nextCursor = (nextIdAfter == null) ? null
+                : Base64.getEncoder().encodeToString(("id:" + nextIdAfter).getBytes());
+        boolean hasNext = filtered.size() > page.size();
 
-        return null;
+        //dto변환및 반환
+        List<ChangeLogDto> dtoList = mapper.toChangeLogDtos(page);
+
+        return new CursorPageResponseChangeLogDto(
+                dtoList,
+                nextCursor,
+                nextIdAfter,
+                pageSize,
+                all.size(),
+                hasNext
+        );
     }
 
     //상세 조회
