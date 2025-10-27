@@ -8,7 +8,7 @@ public record ChangeLogDto(
         String employeeNumber,
         String memo,
         String ipAddress,
-        Instant createdAt
+        Instant at
 ) {
 
 }
