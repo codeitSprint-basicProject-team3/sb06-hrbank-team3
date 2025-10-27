@@ -21,7 +21,6 @@ public class ChangeLogController {
 
 
     //직원정보 수정이력 목록조회
-    //로직구현 미완성/추후 수정예정
     @GetMapping
     public ResponseEntity<CursorPageResponseChangeLogDto> getChangeLogs(
             @RequestParam(required = false) String employeeNumber,
