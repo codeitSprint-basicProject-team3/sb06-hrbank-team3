@@ -16,6 +16,16 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>, Employ
 
   Long countAllByStatusNotAndHireDateLessThanEqual(EmployeeStatus resignedStatus,  LocalDate current);
 
+  @Query("""
+        SELECT COUNT(e)
+        FROM Employee e
+        LEFT JOIN ChangeLog c
+          ON c.employee = e AND c.afterValue = 'RESIGNED'
+        WHERE e.hireDate <= :toInstant
+          AND (c.id IS NULL OR c.createdAt > :toInstant)
+    """)
+  Long countEmployeesAtDate(Instant toInstant);
+
   Long countAllByStatusAndHireDateBetween(EmployeeStatus status, LocalDate fromDate, LocalDate toDate);
 
   @Query(value = "SELECT e.department.name,COUNT(e) FROM Employee e WHERE e.status = :status GROUP BY e.department")
