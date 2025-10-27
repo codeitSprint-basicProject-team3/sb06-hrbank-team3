@@ -1,7 +1,5 @@
 package com.hrbank.file;
 
-import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,22 +36,29 @@ public class FileService {
   }
 
   public File createMetadata(Path backupFile) throws IOException {
-    return File.builder()
+    File saved = File.builder()
         .name(backupFile.getFileName().toString().replaceFirst("\\.csv$", ""))
         .extension("csv")
         .size(Files.size(backupFile))
         .build();
+    return fileRepository.save(saved);
   }
 
   public void deleteIfExists(Path backupFile){
     if(backupFile == null) {
       return;
     }
-    try {
-      Files.deleteIfExists(backupFile);
-    } catch (IOException e) {
-      log.error("파일 삭제 실패: {}", backupFile, e);
+    File file = fileRepository.findByName(
+            backupFile.getFileName().toString().replaceFirst("\\.csv$", ""))
+        .orElse(null);
+    if(file == null){
+      log.error("파일 메타데이터가 존재하지 않습니다: {}", backupFile.toString());
+      return;
+    } else {
+      log.info("파일 메타데이터와 실제 데이터를 삭제합니다: {}", backupFile.toString());
     }
+    fileRepository.delete(file);
+    storage.delete(file);
   }
 
   public void deleteFile(File file){
