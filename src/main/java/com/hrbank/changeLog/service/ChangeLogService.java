@@ -12,8 +12,11 @@ import com.hrbank.changeLog.entity.ChangeType;
 import com.hrbank.changeLog.entity.ChangeLog;
 import com.hrbank.changeLog.repository.ChangeLogRepository;
 import com.hrbank.employee.EmployeeRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +34,9 @@ public class ChangeLogService {
     private final EmployeeRepository employeeRepository;
     private final HttpServletRequest request;
     private final ChangeLogMapper mapper;
+
+    @PersistenceContext
+    private EntityManager em;
 
 
     //직원 신규 등록시 이력 저장
@@ -50,10 +56,13 @@ public class ChangeLogService {
     }
 
     //직원 정보 수정시 이력 저장
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void createUpdateChangeLog(Employee employee, String memo) {
+
         Employee before = getBeforeState(employee.getId());
         if (before == null) return;
+
+
 
         String ip = getClientIp();
         List<ChangeLog> changes = new ArrayList<>();
@@ -99,7 +108,8 @@ public class ChangeLogService {
         changeLogRepository.save(history);
     }
 
-    private Employee getBeforeState(Long id) {
+    @Transactional(readOnly = true)
+    protected Employee getBeforeState(Long id) {
         return employeeRepository.findById(id).orElse(null);
     }
 
@@ -142,6 +152,15 @@ public class ChangeLogService {
         return e == null ? null : e.name();
     }
 
+    //DiffDto가져오는 로직
+    public List<DiffDto> getChangeLogDiffs(Long id) {
+        ChangeLog entity = changeLogRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("해당 이력이 존재하지 않습니다."));
+
+        return List.of(
+                new DiffDto(entity.getChangedField(), entity.getBeforeValue(), entity.getAfterValue())
+        );
+    }
 
     //목록 조회
     @Transactional

@@ -2,6 +2,7 @@ package com.hrbank.changeLog.controller;
 
 import com.hrbank.changeLog.dto.ChangeLogDetailResponse;
 import com.hrbank.changeLog.dto.CursorPageResponseChangeLogDto;
+import com.hrbank.changeLog.dto.DiffDto;
 import com.hrbank.changeLog.entity.ChangeLog;
 import com.hrbank.changeLog.entity.ChangeType;
 import com.hrbank.changeLog.repository.ChangeLogRepository;
@@ -43,11 +44,18 @@ public class ChangeLogController {
         return ResponseEntity.ok(response);
     }
 
-    //직원정보 수정이력 상세조회
+    //직원정보 수정이력 상세조회 구버전
+    //@GetMapping("/{id}/diffs")
+    //public ResponseEntity<ChangeLogDetailResponse> getChangeLogDetail(@PathVariable Long id) {
+    //    ChangeLogDetailResponse detail = changeLogService.getChangeLogDetail(id);
+    //    return ResponseEntity.ok(detail);
+    //}
+
+    //직원정보 수정이력 상세조회 신버전
     @GetMapping("/{id}/diffs")
-    public ResponseEntity<ChangeLogDetailResponse> getChangeLogDetail(@PathVariable Long id) {
-        ChangeLogDetailResponse detail = changeLogService.getChangeLogDetail(id);
-        return ResponseEntity.ok(detail);
+    public ResponseEntity<List<DiffDto>> getChangeLogDetail(@PathVariable Long id) {
+        List<DiffDto> diffs = changeLogService.getChangeLogDiffs(id);
+        return ResponseEntity.ok(diffs);
     }
 
 
