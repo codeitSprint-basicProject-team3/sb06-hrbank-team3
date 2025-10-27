@@ -63,3 +63,14 @@ tasks.withType(JavaCompile).configureEach {
             "-Aquerydsl.useFields=true"
     ]
 }
+
+// Spring Boot 실행 가능 Jar 생성을 명시적으로 활성화
+bootJar {
+    enabled = true
+}
+
+// Spring Boot 플러그인이 비활성화하지만, 만약을 위해 일반 Jar 생성은 비활성화
+jar {
+    enabled = false
+}
+
