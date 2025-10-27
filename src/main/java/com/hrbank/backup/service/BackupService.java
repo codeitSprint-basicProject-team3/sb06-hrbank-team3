@@ -87,7 +87,7 @@ public class BackupService {
                 .build();
         backupRepository.save(backup);
 
-        Path backupFile = null; // 수정 확인
+        Path backupFilePath = null; // 생성될 CSV 파일 경로
 
         // CSV 파일 생성 -> 로컬에 파일을, DB에 메타데이터를 저장
         try {
@@ -99,41 +99,33 @@ public class BackupService {
             backupFilePath = this.backupDir.resolve(fileName); // 초기화된 backupDir 사용
             log.info("Attempting to write backup file to: {}", backupFilePath);
             // 3. 파일 생성
-            csvBackupWriter.writeEmployeeBackup(this.backupDir, fileName); // backupDir 전달
-
+            backupFile = csvBackupWriter.writeEmployeeBackup(backupDir, fileName);
             log.info("Backup CSV file created successfully: {}", backupFilePath);
 
             // DB에 메타데이터 저장
-            File metadata = fileService.createMetadata(backupFile);
-            backup.setFile(metadata);
+            File metadata = fileService.createMetadata(backupFilePath);
+            backup.setFile(metadata); // 성공 시 CSV 메타데이터 연결
             backup.setStatus(Backup.BackupStatus.COMPLETED);
 
-        } catch (Exception e) {
+        }  catch (Exception e) {
             log.error("Backup failed for ID: {}. Error: {}", backup.getId(), e.getMessage(), e);
 
-            // 실패 시 생성 중이던 CSV 파일 삭제 시도
+            // [원본 유지] 실패 시 생성 중이던 CSV 파일 삭제 시도
             if (backupFilePath != null) {
-                fileService.deleteIfExists(backupFilePath); // FileService의 deleteIfExists 사용
+                fileService.deleteIfExists(backupFilePath);
             }
-
-            // [수정] 에러 로그 파일 생성 및 연결 (FileService 사용)
-            try {
-                 File errorLogFile = fileService.createErrorLog(backup.getId().toString(), e); // FileService에 createErrorLog 필요
-                 finalFileMetadata = errorLogFile; // 실패 시 LOG 메타데이터
-            } catch (Exception logEx) {
-                log.error("Failed to create or save error log file for backup ID: {}", backup.getId(), logEx);
-                // 에러 로그 생성/저장마저 실패하면 file은 null 유지
-            }
-
+            // [원본 유지] 에러 로그 처리 로직 없이 상태만 FAILED로 변경
             backup.setStatus(Backup.BackupStatus.FAILED);
+            // backup.setFile(null); // finalFileMetadata 변수가 없으므로 file은 null 유지됨
 
         } finally {
             backup.setEndedAt(Instant.now());
-            backup.setFile(finalFileMetadata); // 성공/실패 결과에 맞는 파일 메타데이터 설정
+            // backup.setFile(...) 호출 없음 -> 성공 시 try 블록에서 설정된 file 유지, 실패 시 null 유지
             backupRepository.save(backup); // 최종 상태 및 파일 정보 업데이트
         }
 
-        return BackupDto.from(backupRepository.save(backup)); // save 호출 안해도 저장되지만 명시해둠.
+        // finally 블록에서 save 했으므로 DTO 변환만 해서 반환
+        return BackupDto.from(backup);
     }
 
     @Transactional(readOnly = true)
