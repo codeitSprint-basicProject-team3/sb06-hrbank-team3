@@ -334,8 +334,10 @@ public class EmployeeService{
     List<Object[]> result;
     if (groupBy.equals("department")) {
       result = employeeRepository.countAllByStatusGroupByDepartment(status);
-    } else {  // position
+    } else if (groupBy.equals("position")) {
       result = employeeRepository.countAllByStatusGroupByPosition(status);
+    } else {
+      throw new IllegalArgumentException("지원하지 않는 그룹화 기준입니다: " + groupBy);
     }
     return toDtoList(result, statusCount);
   }
