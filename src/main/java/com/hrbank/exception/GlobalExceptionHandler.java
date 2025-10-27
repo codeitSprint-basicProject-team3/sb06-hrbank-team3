@@ -1,11 +1,13 @@
 package com.hrbank.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     // 찾으려는 리소스가 없을 경우
@@ -16,6 +18,7 @@ public class GlobalExceptionHandler {
                 "리소스를 찾을 수 없습니다.",
                 ex.getMessage()
         );
+        log.error("NotFoundException: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
@@ -27,6 +30,7 @@ public class GlobalExceptionHandler {
                 "잘못된 요청입니다.",
                 ex.getMessage()
         );
+        log.error("IllegalArgumentException: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
@@ -37,6 +41,7 @@ public class GlobalExceptionHandler {
             "잘못된 요청입니다.",
             ex.getMessage()
         );
+        log.error("IllegalStateException: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
@@ -48,6 +53,7 @@ public class GlobalExceptionHandler {
                 "서버 내부 오류가 발생했습니다.",
                 ex.getMessage()
         );
+        log.error("Exception: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }

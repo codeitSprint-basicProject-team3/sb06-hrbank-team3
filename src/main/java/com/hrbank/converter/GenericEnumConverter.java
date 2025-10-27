@@ -17,6 +17,7 @@ public class GenericEnumConverter<T extends Enum<T>> implements Converter<String
   @Override
   public T convert(String source) {
     try {
+      System.out.println("[DEBUG] converting " + source);
       return Enum.valueOf(enumType, source.toUpperCase());  // 대문자로 변환해서 Enum 값과 매핑
     } catch (Exception e) {
       throw new RuntimeException("지원하지 않는 값입니다: " + source);
