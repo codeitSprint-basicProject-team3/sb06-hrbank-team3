@@ -12,6 +12,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ChangeLogMapper {
     @Mapping(source = "employee.employeeNumber", target = "employeeNumber")
+    @Mapping(source = "createdAt", target = "at")
     ChangeLogDto toChangeLogDto(ChangeLog entity);
 
     List<ChangeLogDto> toChangeLogDtos(List<ChangeLog> entities);
