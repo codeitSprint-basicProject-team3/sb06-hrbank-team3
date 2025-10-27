@@ -99,7 +99,7 @@ public class BackupService {
             backupFilePath = this.backupDir.resolve(fileName); // 초기화된 backupDir 사용
             log.info("Attempting to write backup file to: {}", backupFilePath);
             // 3. 파일 생성
-            backupFile = csvBackupWriter.writeEmployeeBackup(backupDir, fileName);
+            csvBackupWriter.writeEmployeeBackup(backupDir, fileName);
             log.info("Backup CSV file created successfully: {}", backupFilePath);
 
             // DB에 메타데이터 저장
