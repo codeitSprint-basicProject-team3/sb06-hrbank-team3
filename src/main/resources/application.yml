@@ -69,7 +69,7 @@ spring:
   # 2. JPA 설정
   jpa:
     hibernate:
-      ddl-auto: update # 배포 시 스키마를 엔티티에 맞게 자동 갱신
+      ddl-auto: create-drop 
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
