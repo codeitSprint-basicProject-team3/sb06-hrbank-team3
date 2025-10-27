@@ -2,20 +2,19 @@ package com.hrbank.backup.dto;
 
 import com.hrbank.backup.entity.Backup;
 import com.hrbank.backup.enums.SortField;
-import com.hrbank.employee.enums.SortDirection;
 import lombok.Builder;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Sort;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @ParameterObject
 @Builder
 public record BackupFindRequestDto(
         String worker,
         Backup.BackupStatus status,
-        LocalDateTime startedAtFrom,
-        LocalDateTime startedAtTo,
+        Instant startedAtFrom,
+        Instant startedAtTo,
         Long idAfter,
         String cursor,
         Integer size,

@@ -33,6 +33,7 @@ public class ChangeLog {
     @Column(name = "changed_field", nullable = false)
     private String changedField;
 
+    // todo nullable 뺌 확인
     @Column(name = "before_value")
     private String beforeValue;
 

@@ -137,6 +137,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
         return Optional.ofNullable(
                 queryFactory
                 .select(employee.count())
+                .from(employee)
                 .where(builder)
                 .fetchOne())
                 .orElse(0L);

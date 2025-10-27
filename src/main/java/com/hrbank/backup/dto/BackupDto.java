@@ -3,14 +3,14 @@ package com.hrbank.backup.dto;
 import com.hrbank.backup.entity.Backup;
 import lombok.Builder;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Builder
 public record BackupDto (
         Long id,
         String worker,
-        LocalDateTime startedAt,
-        LocalDateTime endedAt,
+        Instant startedAt,
+        Instant endedAt,
         Backup.BackupStatus status,
         Long fileId
 ){

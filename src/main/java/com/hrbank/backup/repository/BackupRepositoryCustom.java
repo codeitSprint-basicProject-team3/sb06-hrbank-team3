@@ -4,13 +4,13 @@ import com.hrbank.backup.entity.Backup;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public interface BackupRepositoryCustom {
     Slice<Backup> search(
             Long idAfter,
-            LocalDateTime start,
-            LocalDateTime end,
+            Instant start,
+            Instant end,
             String worker,
             Backup.BackupStatus status,
             boolean ascending,

@@ -1,5 +1,6 @@
 package com.hrbank.employee;
 
+import com.hrbank.changeLog.repository.ChangeLogRepository;
 import com.hrbank.changeLog.service.ChangeLogService;
 import com.hrbank.department.entity.Department;
 import com.hrbank.department.repository.DepartmentRepository;
@@ -39,10 +40,11 @@ public class EmployeeService{
 
   private final EmployeeRepository employeeRepository;
   private final DepartmentRepository departmentRepository;
+  private final ChangeLogRepository changeLogRepository;
 
   private final EmployeeMapper employeeMapper;
 
-  private final ChangeLogService historyService;
+  private final ChangeLogService changeLogService;
   private final FileService fileService;
 
   // 직원 등록
@@ -84,7 +86,7 @@ public class EmployeeService{
 
     employeeRepository.save(newEmployee);
 
-    historyService.createCreateChangeLog(newEmployee, createRequest.memo());
+    changeLogService.createCreateChangeLog(newEmployee, createRequest.memo());
 
     return employeeMapper.toEmployeeDto(newEmployee);
   }
@@ -137,7 +139,7 @@ public class EmployeeService{
 
 
       // 직원 수정 이력 - '수정' 생성
-      historyService.createUpdateChangeLog(employee, updateRequest.memo());
+      changeLogService.createUpdateChangeLog(employee, updateRequest.memo());
 
       return employeeMapper.toEmployeeDto(employee);
   }
@@ -158,7 +160,7 @@ public class EmployeeService{
       }
 
       // 직원 수정 이력 - '삭제' 생성
-      historyService.createResignChangeLog(employee);
+      changeLogService.createResignChangeLog(employee);
 
       // 직원 상태 '퇴사'로 수정
       employee.setStatus(EmployeeStatus.RESIGNED);
@@ -234,26 +236,24 @@ public class EmployeeService{
   /*
   # 직원 수 추이 조회
   조건 1. 현재 퇴직 상태가 아니고 (재직중,휴가중) 조회하려는 시기가 입사일 이후
-  조건 2. 직원이력의 afterValue가 퇴직 상태이고 조회하려는 시기가 직원의 createdAt과 직원이력의 createdAt 사이에 있는 경우
-  조건 3. from 기본값: 현재로부터 unit 기준 12개 이전 (12달 이전)
+  조건 2. 직원이력의 afterValue가 퇴직이고 조회하려는 시기가 직원이력의 createdAt 이전
+  조건 3. from 기본값: 현재로부터 unit 기준 12개 이전
   조건 4. to 기본값: 현재
   조건 5. unit 기본값: month
    */
   @Transactional(readOnly = true)
-  public List<EmployeeTrendDto> getEmployeeChangeTrend(LocalDate from, LocalDate to, PeriodUnit unit) {
-    if (from == null) {
-      from = LocalDate.now().minusMonths(12);
-    }
+  public List<EmployeeTrendDto> getEmployeeChangeTrend(LocalDate from, LocalDate to, String unit) {
     if (to == null) {
       to = LocalDate.now();
     }
     List<EmployeeTrendDto> dtoList = new ArrayList<>();
     Period period = switch (unit) {
-      case DAY -> Period.ofDays(1);
-      case WEEK -> Period.ofWeeks(1);
-      case MONTH -> Period.ofMonths(1);
-      case QUARTER -> Period.ofMonths(3);
-      case YEAR -> Period.ofYears(1);
+      case "day" -> Period.ofDays(1);
+      case "week" -> Period.ofWeeks(1);
+      case "month" -> Period.ofMonths(1);
+      case "quarter" -> Period.ofMonths(3);
+      case "year" -> Period.ofYears(1);
+      default -> throw new IllegalStateException("정해지지 않은 날짜 조건입니다 " + unit);
     };
     collectTrendByPeriod(period, from, to, dtoList);
     return dtoList;
@@ -261,6 +261,9 @@ public class EmployeeService{
 
   public void collectTrendByPeriod(Period period, LocalDate from, LocalDate to,
       List<EmployeeTrendDto> dtoList) {
+    if (from == null) {
+      from = LocalDate.now().minus(period.multipliedBy(12));
+    }
     LocalDate current = from;
     LocalDate previous = current.minus(period);
     LocalDate next = current.plus(period);
@@ -285,6 +288,12 @@ public class EmployeeService{
       return;
     }
     Long previousEmployeeNum = employeeNumberThisDay(previous);
+    if(previousEmployeeNum == 0L){
+      dtoList.add(
+          new EmployeeTrendDto(current, currentEmployeeNum, 0L, 0.0)
+      );
+      return;
+    }
     dtoList.add(
         new EmployeeTrendDto(
             current,
@@ -297,13 +306,13 @@ public class EmployeeService{
   // 조건 1 + 조건 2
   public Long employeeNumberThisDay(LocalDate date) {
     Instant toInstant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
-    return employeeRepository.countAllByStatusNotAndHireDateLessThanEqual(EmployeeStatus.RESIGNED, date);
-//   todo     + employeeRepository.countAllByStatusAtInstant(EmployeeStatus.RESIGNED, toInstant);
+    return employeeRepository.countAllByStatusNotAndHireDateLessThanEqual(EmployeeStatus.RESIGNED, date)
+    + changeLogRepository.countAllByAfterValueAndCreatedAtBefore("RESIGNED", toInstant);
   }
 
   /*
   # 직원 수 조회
-  조건 1. 현재 직원 상태
+  조건 1. 현재 직원 상태, (기본값은 재직중, API 명세서에는 기본값 X)
   조건 2. 주어진 기간 내 입사한 직원 수 조회
   조건 3. fromDate 미지정 시 현재 직원 상태에 따른 전체 직원 수 조회
   조건 4. toDate 기본값 현재 일시
@@ -326,13 +335,15 @@ public class EmployeeService{
   조건 3. 세부이름을 기준으로 데이터를 리스트로 반환
    */
   @Transactional(readOnly = true)
-  public List<EmployeeDistributionDto> findDistributedEmployee(EmployeeGroupBy groupBy, EmployeeStatus status) {
+  public List<EmployeeDistributionDto> findDistributedEmployee(String groupBy, EmployeeStatus status) {
     Long statusCount = employeeRepository.countAllByStatus(status);
     List<Object[]> result;
-    if (EmployeeGroupBy.DEPARTMENT.equals(groupBy)) {
+    if (groupBy.equals("department")) {
       result = employeeRepository.countAllByStatusGroupByDepartment(status);
-    } else {  // POSITION
+    } else if (groupBy.equals("position")) {
       result = employeeRepository.countAllByStatusGroupByPosition(status);
+    } else {
+      throw new IllegalArgumentException("지원하지 않는 그룹화 기준입니다: " + groupBy);
     }
     return toDtoList(result, statusCount);
   }

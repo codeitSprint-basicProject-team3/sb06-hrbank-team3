@@ -4,7 +4,7 @@ import com.hrbank.file.File;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Getter @Setter
@@ -20,10 +20,10 @@ public class Backup {
     private String worker; // 작업자의 IP주소
 
     @Column(name = "started_at")
-    private LocalDateTime startedAt;
+    private Instant startedAt;
 
     @Column(name = "ended_at")
-    private LocalDateTime endedAt;
+    private Instant endedAt;
 
     @Enumerated(EnumType.STRING)
     private BackupStatus status;
@@ -38,11 +38,11 @@ public class Backup {
 
     @PrePersist
     private void onCreate(){
-        this.startedAt = LocalDateTime.now();
+        this.startedAt = Instant.now();
     }
 
     @PreUpdate
     private void onUpdate(){
-        this.endedAt = LocalDateTime.now();
+        this.endedAt = Instant.now();
     }
 }
