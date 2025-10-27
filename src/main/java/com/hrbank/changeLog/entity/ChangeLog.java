@@ -4,6 +4,8 @@ package com.hrbank.changeLog.entity;
 import com.hrbank.employee.Employee;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -26,8 +28,10 @@ public class ChangeLog {
     @Column(nullable = false)
     private ChangeType type;
 
+    // 직원 삭제 로직을 위해 nullable = true 로 변경
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", nullable = false)
+    @JoinColumn(name = "employee_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Employee employee;
 
     @Column(name = "changed_field", nullable = false)
@@ -37,7 +41,8 @@ public class ChangeLog {
     @Column(name = "before_value")
     private String beforeValue;
 
-    @Column(name = "after_value",nullable = false)
+    // nullable = true로 변경
+    @Column(name = "after_value")
     private String afterValue;
 
 
