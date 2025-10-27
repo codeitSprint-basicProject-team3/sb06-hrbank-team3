@@ -33,7 +33,7 @@ public class ChangeLog {
     @Column(name = "changed_field", nullable = false)
     private String changedField;
 
-    @Column(name = "before_value",nullable = false)
+    @Column(name = "before_value")
     private String beforeValue;
 
     @Column(name = "after_value",nullable = false)

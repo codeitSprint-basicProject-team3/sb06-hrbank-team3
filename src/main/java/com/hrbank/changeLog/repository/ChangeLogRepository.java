@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -25,13 +26,13 @@ public interface ChangeLogRepository extends JpaRepository<ChangeLog, Long> {
           AND (:memo IS NULL OR c.memo LIKE %:memo%)
           AND (:ipAddress IS NULL OR c.ipAddress LIKE %:ipAddress%)
           AND (:type IS NULL OR c.type = :type)
-          AND (:from IS NULL OR c.createdAt >= :from)
-          AND (:to IS NULL OR c.createdAt <= :to)
+          AND (COALESCE(:from, c.createdAt) <= c.createdAt)
+          AND (COALESCE(:to, c.createdAt) >= c.createdAt)
         ORDER BY 
           CASE WHEN :sortField = 'ipAddress' AND :sortDirection = 'asc' THEN c.ipAddress END ASC,
           CASE WHEN :sortField = 'ipAddress' AND :sortDirection = 'desc' THEN c.ipAddress END DESC,
-          CASE WHEN :sortField = 'at' AND :sortDirection = 'asc' THEN c.createdAt END ASC,
-          CASE WHEN :sortField = 'at' AND :sortDirection = 'desc' THEN c.createdAt END DESC
+          CASE WHEN :sortField = 'createdAt' AND :sortDirection = 'asc' THEN c.createdAt END ASC,
+          CASE WHEN :sortField = 'createdAt' AND :sortDirection = 'desc' THEN c.createdAt END DESC
     """)
     List<ChangeLog> searchChangeLogs(
             @Param("employeeNumber") String employeeNumber,
