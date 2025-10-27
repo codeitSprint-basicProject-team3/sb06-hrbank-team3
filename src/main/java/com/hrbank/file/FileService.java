@@ -28,7 +28,7 @@ public class FileService {
     File file = new File(null,profile.getName(),profile.getContentType(),profile.getSize());
     File saved = fileRepository.save(file);
     try{
-      storage.put(file.getId(), profile.getBytes());
+      storage.put(saved.getId(), profile.getBytes());
     } catch (Exception e){
       throw new RuntimeException("파일 저장 중 에러");
     }
@@ -36,12 +36,14 @@ public class FileService {
   }
 
   public File createMetadata(Path backupFile) throws IOException {
-    File saved = File.builder()
+    File file = File.builder()
         .name(backupFile.getFileName().toString().replaceFirst("\\.csv$", ""))
         .extension("csv")
         .size(Files.size(backupFile))
         .build();
-    return fileRepository.save(saved);
+    File saved = fileRepository.save(file);
+    storage.put(saved.getId(), Files.readAllBytes(backupFile));
+    return saved;
   }
 
   public void deleteIfExists(Path backupFile){

@@ -235,7 +235,7 @@ public class EmployeeService{
 
   /*
   # 직원 수 추이 조회
-  조건 1. 현재 퇴직 상태가 아니고 (재직중,휴가중) 조회하려는 시기가 입사일 이후
+  조건 1. 직원이력의 afterValue가 직원 신규 등록이고 조회하려는 시기가 직원이력의 createdAt 이후
   조건 2. 직원이력의 afterValue가 퇴직이고 조회하려는 시기가 직원이력의 createdAt 이전
   조건 3. from 기본값: 현재로부터 unit 기준 12개 이전
   조건 4. to 기본값: 현재
@@ -306,8 +306,8 @@ public class EmployeeService{
   // 조건 1 + 조건 2
   public Long employeeNumberThisDay(LocalDate date) {
     Instant toInstant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
-    return employeeRepository.countAllByStatusNotAndHireDateLessThanEqual(EmployeeStatus.RESIGNED, date)
-    + changeLogRepository.countAllByAfterValueAndCreatedAtBefore("RESIGNED", toInstant);
+    return changeLogRepository.countAllByAfterValueAndCreatedAtBefore("직원 신규 등록",toInstant)
+    + changeLogRepository.countAllByAfterValueAndCreatedAtAfter("RESIGNED", toInstant);
   }
 
   /*

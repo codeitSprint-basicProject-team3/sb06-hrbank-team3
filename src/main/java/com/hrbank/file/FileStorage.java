@@ -3,6 +3,7 @@ package com.hrbank.file;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,13 +35,13 @@ public class FileStorage {
     }
   }
 
-  private Path resolvePath(Long id) {
-    return this.root.resolve(id + "");
+  private Path resolvePath(Long fileId) {
+    return this.root.resolve(fileId+"");
   }
 
   public ResponseEntity<?> download(File file) {
     try {
-      byte[] bytes = get(file.getId()).readAllBytes();
+      byte[] bytes = get(file).readAllBytes();
       return ResponseEntity.ok(bytes);
     } catch (IOException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 다운로드 실패");
@@ -65,8 +66,8 @@ public class FileStorage {
     }
   }
 
-  private InputStream get(Long fileId) throws IOException {
-    Path filePath = resolvePath(fileId);
+  private InputStream get(File file) throws IOException {
+    Path filePath = resolvePath(file.getId());
     return Files.newInputStream(filePath);
   }
 }

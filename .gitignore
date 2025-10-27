@@ -5,6 +5,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 /logs/
+/file-data
+com/hrbank/backup/files/
 
 ### STS ###
 .apt_generated
