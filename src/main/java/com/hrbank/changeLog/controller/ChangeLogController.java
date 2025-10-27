@@ -35,6 +35,7 @@ public class ChangeLogController {
             @RequestParam(defaultValue = "createdAt") String sortField,
             @RequestParam(defaultValue = "desc") String sortDirection
     ) {
+
         CursorPageResponseChangeLogDto response = changeLogService.getChangeLogs(
                 employeeNumber, memo, ipAddress, type, atFrom, atTo, idAfter, cursor, size, sortField, sortDirection
         );

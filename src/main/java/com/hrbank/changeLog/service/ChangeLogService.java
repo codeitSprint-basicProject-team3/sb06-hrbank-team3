@@ -17,6 +17,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -158,6 +159,8 @@ public class ChangeLogService {
             String sortDirection
     )
     {
+
+
         // 리포지토리에서 정렬까지 포함해 전부 가져옴
         List<ChangeLog> all = changeLogRepository.searchChangeLogs(
                 employeeNumber, memo, ipAddress, type, atFrom, atTo, sortField, sortDirection
