@@ -19,7 +19,7 @@ public interface ChangeLogRepository extends JpaRepository<ChangeLog, Long> {
     //List<EmployeeHistory> findByEmployeeIdAndType(UUID employeeId, ChangeType type); /미사용예정
     long countByCreatedAtBetween(Instant from, Instant to);
     Long countAllByAfterValueAndCreatedAtBefore(String afterValue, Instant toInstant);
-    Long countAllByAfterValueAndCreatedAtAfter(String afterValue, Instant toInstant);
+    Long countAllByAfterValueAndCreatedAtAfter(String beforeValue, Instant toInstant);
 
     @Query("""
         SELECT c FROM ChangeLog c

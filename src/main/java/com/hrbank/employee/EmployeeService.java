@@ -306,8 +306,7 @@ public class EmployeeService{
   // 조건 1 + 조건 2
   public Long employeeNumberThisDay(LocalDate date) {
     Instant toInstant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
-    return changeLogRepository.countAllByAfterValueAndCreatedAtBefore("직원 신규 등록",toInstant)
-    + changeLogRepository.countAllByAfterValueAndCreatedAtAfter("RESIGNED", toInstant);
+    return employeeRepository.countEmployeesAtDate(toInstant);
   }
 
   /*
