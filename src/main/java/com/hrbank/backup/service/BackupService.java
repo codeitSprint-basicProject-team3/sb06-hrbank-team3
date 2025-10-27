@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -43,17 +42,15 @@ public class BackupService {
         Backup lastBackup = backupRepository.findFirstByStatusOrderByEndedAtDesc(Backup.BackupStatus.COMPLETED)
                 .orElse(null);
 
-        LocalDateTime lastBackupTime = lastBackup != null ? lastBackup.getEndedAt() : LocalDateTime.MIN;
-        // todo LocalDateTime -> Instant 수정 확인 필요 -이호건
-        Instant toInstant = lastBackupTime.atOffset(ZoneOffset.UTC).toInstant();
-        Boolean hasChanged = employeeRepository.existsByUpdatedAtAfter(toInstant);
+        Instant lastBackupTime = lastBackup != null ? lastBackup.getEndedAt() : Instant.EPOCH;
+        Boolean hasChanged = employeeRepository.existsByUpdatedAtAfter(lastBackupTime);
 
         // 변경 없으면 건너뜀 - 파일 생성하지 않음.
         if (!hasChanged) {
             Backup skipped = Backup.builder()
                     .worker(worker)
-                    .startedAt(LocalDateTime.now())
-                    .endedAt(LocalDateTime.now())
+                    .startedAt(Instant.now())
+                    .endedAt(Instant.now())
                     .status(Backup.BackupStatus.SKIPPED)
                     .build();
 
@@ -62,7 +59,7 @@ public class BackupService {
 
         Backup backup = Backup.builder()
                 .worker(worker)
-                .startedAt(LocalDateTime.now())
+                .startedAt(Instant.now())
                 .status(Backup.BackupStatus.IN_PROGRESS)
                 .build();
         backupRepository.save(backup);
@@ -91,7 +88,7 @@ public class BackupService {
             backup.setStatus(Backup.BackupStatus.FAILED);
 
         } finally {
-            backup.setEndedAt(LocalDateTime.now());
+            backup.setEndedAt(Instant.now());
         }
 
         return BackupDto.from(backupRepository.save(backup)); // save 호출 안해도 저장되지만 명시해둠.
@@ -146,7 +143,7 @@ public class BackupService {
     @Transactional(readOnly = true)
     public BackupDto findLatest(Backup.BackupStatus status) {
         Backup backup = backupRepository.findFirstByStatusOrderByEndedAtDesc(status)
-                .orElseThrow(() -> new NotFoundException("백업이 존재하지 않습니다."));
-        return BackupDto.from(backup);
+                .orElse(null);
+        return backup != null ? BackupDto.from(backup) : null;
     }
 }
