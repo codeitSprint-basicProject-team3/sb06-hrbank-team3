@@ -92,20 +92,21 @@ public class ChangeLogService {
         }
     }
 
-    //직원 퇴사시 이력 저장
-    public void createResignChangeLog(Employee employee) {
+    //직원 삭제 시 이력 저장
+    public void createDeleteChangeLog(Employee employee) {
         String ipAddress = getClientIp();
         ChangeLog history = ChangeLog.builder()
                 .employee(employee)
                 .type(ChangeType.DELETED)
-                .changedField("status")
+                .changedField("All")
                 .beforeValue("ACTIVE")
-                .afterValue("RESIGNED")
+                .afterValue(null)
                 .memo("직원 삭제")
                 .ipAddress(ipAddress)
-                .createdAt(Instant.now())
                 .build();
+        history.setEmployee(null);
         changeLogRepository.save(history);
+        changeLogRepository.flush();
     }
 
     @Transactional(readOnly = true)
