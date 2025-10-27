@@ -152,6 +152,9 @@ public class EmployeeService{
       Employee employee = employeeRepository.findById(employeeId)
               .orElseThrow(() -> new NoSuchElementException("존재하지 않는 직원입니다."));
 
+      // 직원 삭제 이력 생성
+      changeLogService.createDeleteChangeLog(employee);
+
       // 프로필 삭제
       File profileFile = employee.getFile();
       if (profileFile != null) {
@@ -159,11 +162,7 @@ public class EmployeeService{
           fileService.deleteFile(profileFile);
       }
 
-      // 직원 수정 이력 - '삭제' 생성
-      changeLogService.createResignChangeLog(employee);
-
-      // 직원 상태 '퇴사'로 수정
-      employee.setStatus(EmployeeStatus.RESIGNED);
+      employeeRepository.delete(employee);
   }
 
   // 직원 목록 조회
