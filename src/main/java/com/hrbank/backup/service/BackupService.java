@@ -17,13 +17,17 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.annotation.PostConstruct;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +38,25 @@ public class BackupService {
     private final CsvBackupWriter csvBackupWriter;
     private final FileService fileService;
     private final EmployeeRepository employeeRepository;
+
+    @Value("${hrbank.storage.root-path}")
+    private String storageRootPath;
+
+    private Path backupDir; // 백업 파일 저장 경로
+
+    // Bean 생성 후 backupDir 초기화
+    @PostConstruct
+    public void init() {
+        this.backupDir = Paths.get(storageRootPath, "backup-files").toAbsolutePath().normalize(); // 백업 전용 하위 폴더 생성
+        try {
+            Files.createDirectories(this.backupDir);
+            log.info("Backup directory created/initialized at: {}", this.backupDir);
+        } catch (Exception ex) {
+            throw new RuntimeException("Could not create backup directory: " + this.backupDir, ex);
+        }
+    }
+
+
 
     @Transactional
     public BackupDto start(String worker){
@@ -64,7 +87,7 @@ public class BackupService {
                 .build();
         backupRepository.save(backup);
 
-        Path backupFile = null; // 수정 확인
+        Path backupFilePath = null; // 생성될 CSV 파일 경로
 
         // CSV 파일 생성 -> 로컬에 파일을, DB에 메타데이터를 저장
         try {
@@ -73,25 +96,36 @@ public class BackupService {
             String fileName = BackupFileNameUtils
                     .generateFileName(backup.getId(), "employee_backup", "csv");
             // 2. 파일 경로 설정
-            Path backupDir = Paths.get("com/hrbank/backup/files");
+            backupFilePath = this.backupDir.resolve(fileName); // 초기화된 backupDir 사용
+            log.info("Attempting to write backup file to: {}", backupFilePath);
             // 3. 파일 생성
-            backupFile = csvBackupWriter.writeEmployeeBackup(backupDir, fileName);
+            csvBackupWriter.writeEmployeeBackup(backupDir, fileName);
+            log.info("Backup CSV file created successfully: {}", backupFilePath);
 
             // DB에 메타데이터 저장
-            File metadata = fileService.createMetadata(backupFile);
-            backup.setFile(metadata);
+            File metadata = fileService.createMetadata(backupFilePath);
+            backup.setFile(metadata); // 성공 시 CSV 메타데이터 연결
             backup.setStatus(Backup.BackupStatus.COMPLETED);
 
-        } catch (Exception e) {
-            log.error("백업 실패", e);
-            fileService.deleteIfExists(backupFile);
+        }  catch (Exception e) {
+            log.error("Backup failed for ID: {}. Error: {}", backup.getId(), e.getMessage(), e);
+
+            // [원본 유지] 실패 시 생성 중이던 CSV 파일 삭제 시도
+            if (backupFilePath != null) {
+                fileService.deleteIfExists(backupFilePath);
+            }
+            // [원본 유지] 에러 로그 처리 로직 없이 상태만 FAILED로 변경
             backup.setStatus(Backup.BackupStatus.FAILED);
+            // backup.setFile(null); // finalFileMetadata 변수가 없으므로 file은 null 유지됨
 
         } finally {
             backup.setEndedAt(Instant.now());
+            // backup.setFile(...) 호출 없음 -> 성공 시 try 블록에서 설정된 file 유지, 실패 시 null 유지
+            backupRepository.save(backup); // 최종 상태 및 파일 정보 업데이트
         }
 
-        return BackupDto.from(backupRepository.save(backup)); // save 호출 안해도 저장되지만 명시해둠.
+        // finally 블록에서 save 했으므로 DTO 변환만 해서 반환
+        return BackupDto.from(backup);
     }
 
     @Transactional(readOnly = true)
