@@ -1,47 +1,91 @@
-spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/hrbank
-    username: team03
-    password: 3333
+# ==================================
+# 기본(default) 프로필: 로컬 개발 환경
+# ==================================
+#spring:
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:5432/hrbank
+#    username: team03
+#    password: 3333
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+#    show-sql: false
+#    open-in-view: false
+#
+#  servlet:
+#    multipart:
+#      max-file-size: 10MB
+#      max-request-size: 10MB
+#
+#server:
+#  port: 8080
+#
+## 백업 Batch 및 저장 경로 설정
+#hrbank:
+#  backup:
+#    schedule:
+#      cron: "0 0 * * * *"   # 매 정시마다 (1시간 간격)
+#  storage:
+#    root-path: /file-data
+#
+## 에러 로그 저장 설정
+#logging:
+#  file:
+#    name: logs/backup.log  # 로그 파일 경로 (자동 생성됨)
+#  level:
+#    root: INFO             # 전체 로그 레벨
+#    com.hrbank: DEBUG    # 우리 패키지 로그만 더 자세히
+#    org:
+#      hibernate:
+#        sql: DEBUG
+#        type:
+#          descriptor:
+#            sql:
+#              BasicBinder: TRACE
 
+
+# ==================================
+# 'prod' 프로필: Railway 배포 환경
+# ==================================
+spring:
+  config:
+    activate:
+      on-profile: prod # 'prod' 프로필로 실행 시 이 설정이 활성화됨
+
+  # 1. 데이터베이스 설정
+  datasource:
+    # Railway가 자동으로 주입하는 환경 변수를 사용
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  # 2. JPA 설정
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update # 배포 시 스키마를 엔티티에 맞게 자동 갱신
     properties:
       hibernate:
-        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: false
-    open-in-view: false
 
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+  # 3. 서버 포트 설정
+  server:
+    port: ${PORT} # Railway가 할당하는 포트(${PORT})를 사용 (필수!)
 
-server:
-  port: 8080
-
-# 백업 Batch 및 저장 경로 설정
+# 4. 파일 저장 경로 설정
 hrbank:
-  backup:
-    schedule:
-      cron: "0 0 * * * *"   # 매 정시마다 (1시간 간격)
   storage:
-    root-path: /file-data
+    root-path: ./file-data-temp # Railway의 임시 파일 저장 경로 (재시작 시 삭제됨)
 
-# 에러 로그 저장 설정
+# 5. 로깅 설정
 logging:
-  file:
-    name: logs/backup.log  # 로그 파일 경로 (자동 생성됨)
   level:
-    root: INFO             # 전체 로그 레벨
-    com.hrbank: DEBUG    # 우리 패키지 로그만 더 자세히
-    org:
-      hibernate:
-        sql: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
+    root: INFO # 배포 환경에서는 INFO 레벨로 설정
+    com.hrbank: INFO
+
