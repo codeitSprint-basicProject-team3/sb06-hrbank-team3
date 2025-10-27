@@ -17,6 +17,7 @@ public interface ChangeLogRepository extends JpaRepository<ChangeLog, Long> {
     // List<ChangeLog> findByEmployeeId(UUID employeeId); /미사용예정
     //List<EmployeeHistory> findByEmployeeIdAndType(UUID employeeId, ChangeType type); /미사용예정
     long countByCreatedAtBetween(Instant from, Instant to);
+    Long countAllByAfterValueAndCreatedAtBefore(String AfterValue, Instant toInstant);
 
     @Query("""
         SELECT c FROM ChangeLog c
