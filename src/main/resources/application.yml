@@ -80,9 +80,11 @@ spring:
 
 # 4. 파일 저장 경로 설정
 hrbank:
+  backup:
+    schedule:
+      cron: "0 0 * * * *"   # 배포 환경에서도 동일하게 1시간 간격
   storage:
-    root-path: ./file-data-temp # Railway의 임시 파일 저장 경로 (재시작 시 삭제됨)
-
+    root-path: ./file-data-temp # Railway의 임시 파일 저장 경로
 # 5. 로깅 설정
 logging:
   level:
