@@ -48,7 +48,7 @@ public class FileStorage {
     }
   }
 
-  protected void put(Long fileId, byte[] data) {
+  public void put(Long fileId, byte[] data) {
     Path filePath = resolvePath(fileId);
     try {
       Files.write(filePath, data);

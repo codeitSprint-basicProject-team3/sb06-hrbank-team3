@@ -13,8 +13,12 @@ import com.hrbank.backup.util.CsvBackupWriter;
 import com.hrbank.backup.repository.BackupRepository;
 import com.hrbank.file.File;
 import com.hrbank.file.FileService;
+
+import java.nio.file.Files;
 import java.time.Instant;
 import java.time.ZoneOffset;
+
+import com.hrbank.file.FileStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -34,6 +38,7 @@ public class BackupService {
     private final CsvBackupWriter csvBackupWriter;
     private final FileService fileService;
     private final EmployeeRepository employeeRepository;
+    private final FileStorage fileStorage;
 
     @Transactional
     public BackupDto start(String worker){
@@ -81,6 +86,9 @@ public class BackupService {
             File metadata = fileService.createMetadata(backupFile);
             backup.setFile(metadata);
             backup.setStatus(Backup.BackupStatus.COMPLETED);
+
+            byte[] data = Files.readAllBytes(backupFile);
+            fileStorage.put(metadata.getId(), data);
 
         } catch (Exception e) {
             log.error("백업 실패", e);
